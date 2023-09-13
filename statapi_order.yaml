@@ -416,12 +416,12 @@ components:
           maxLength: 2000
         ShippingLabel:
           type: string
-          description: The BarcodeURL helps to check the status of the ordered product.  
+          description: The label affixed on the package gives comprehensive information regarding the shipment.
           minLength: 0
           maxLength: 2000
         VpodDownload:
           type: string
-          description: VpodDownload
+          description: 
           minLength: 0
           maxLength: 2000
         SignatureURL:
