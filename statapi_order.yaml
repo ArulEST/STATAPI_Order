@@ -66,18 +66,18 @@ paths:
     get:
       tags:
         - Orders
-      summary: Get orders details based on the provided value.
+      summary: This API endpoint enables real-time order tracking throughout the shipment process.
       operationId: Orders_GetOrdersPublic
       parameters:
         - name: trackingNumber
           in: query
-          description: The tracking number acts as a unique identifier to track the package in real time during the shipment.
+          description: The tracking number acts as a unique identifier to track the package in real-time during the shipment.
           required: true
           schema:
             type: string
         - name: key
           in: query
-          description: API key
+          description: The system-generated key serves the purpose of authenticating or verifying the customer's identity. 
           required: true
           schema:
             type: string
@@ -118,7 +118,7 @@ components:
       properties:
         Zone:
           type: string
-          description: The name of the collection zone
+          description: Denotes the location zone
           minLength: 0
           maxLength: 50
         ID:
@@ -322,24 +322,29 @@ components:
         Date:
           type: string
           format: date-time
-          description: 
+          description: Order delivery date 
         Description:
           type: string
-          description: 
+          description: This is a free text field where the special instructions about the product, shipment are added
+          minLength: 0
+          maxLength: 2000  
         Exception:
           type: boolean
-          description: 
+          description: This indicates whether the exceptions are required or not. 
+            The potential values are "Yes/No," where "Yes" signifies that the exceptions are required, and "No" signifies that it is not required.
         ExceptionCode:
           type: integer
           format: int32
-          description: 
+          description: The code designated for specific exceptions.
         LocalTime:
           type: string
           format: date-time
-          description: 
+          description: Time in the local zone 
         Region:
           type: string
-          description: 
+          description: Denotes the delivery region  
+          minLength: 0
+          maxLength: 50
       example:
         Date: "2023-09-05T15:20:38.0755622Z"
         Description: "Order received"
@@ -355,11 +360,11 @@ components:
         EarliestTime:
           type: string
           format: date-time
-          description: 
+          description: The earliest estimated collection time  
         LatestTime:
           type: string
           format: date-time
-          description: 
+          description: The recently estimated collection time 
       example:
         EarliestTime: "2023-09-05T15:20:31.539697Z"
         LatestTime: "2023-09-06T02:00:00Z"
@@ -371,11 +376,11 @@ components:
         EarliestTime:
           type: string
           format: date-time
-          description: 
+          description: The earliest estimated delivery time  
         LatestTime:
           type: string
           format: date-time
-          description: 
+          description: The recently estimated delivery time
       example:
         EarliestTime: "2023-09-06T12:00:00Z"
         LatestTime: "2023-09-06T16:00:00Z"
@@ -396,7 +401,7 @@ components:
           maxLength: 50
         TrackingNumber:
           type: string
-          description: 
+          description: The tracking number acts as a unique identifier to track the package in real-time during the shipment. 
           minLength: 0
           maxLength: 50
         TrackingURL:
@@ -406,38 +411,42 @@ components:
           maxLength: 2000
         BarcodeURL:
           type: string
-          description: 
+          description: The BarcodeURL helps to check the status of the ordered product.  
           minLength: 0
           maxLength: 2000
         ShippingLabel:
           type: string
-          description: The label affixed on the package gives comprehensive information regarding the shipment. 
+          description: The BarcodeURL helps to check the status of the ordered product.  
+          minLength: 0
+          maxLength: 2000
         VpodDownload:
           type: string
-          description:
+          description: VpodDownload
+          minLength: 0
+          maxLength: 2000
         SignatureURL:
           type: string
-          description:
+          description: The system generates a URL to get the digital signature from the individual  
           minLength: 0
           maxLength: 2000 
         Refrigerated:
           type: boolean
           description: This tells whether the product is refrigerated before or during the shipment.  
-            The possible values are “true/false”. True represents that the product is refrigerated and false demotes it is not refrigerated  
+            The possible values are “Yes/No”. True represents that the product is refrigerated and false demotes it is not refrigerated  
         StatusUpdates:
           $ref: '#/components/schemas/OrderStatusDto'
         DeliveryContactName:
           type: string
-          description: 
+          description: Name of the individual to contact during the delivery 
           minLength: 0
           maxLength: 50
         StatusCode:
           type: integer
           format: int32
-          description: 
+          description: Status code of the order package 
         CustomerAccount:
           type: string
-          description:  
+          description: Account number of the customer
           minLength: 0
           maxLength: 50
         Description:
@@ -450,9 +459,14 @@ components:
           description: It’s a free text field to add comments  
           minLength: 0
           maxLength: 2000
+        Customer:
+          type: string
+          description: Name of the customer 
+          minLength: 0
+          maxLength: 50  
         PriceSet:
           type: string
-          description: PriceSet 
+          description: Priceset of the package   
           minLength: 0
           maxLength: 50 
         CollectionArrivalWindow:
@@ -461,24 +475,27 @@ components:
           $ref: '#/components/schemas/Deliverylocation'
         CollectionSignatureRequired:
           type: boolean
-          description: Denotes whether it is required to get the signature from the person after collecting the package
+          description: This indicates whether obtaining a signature from the recipient is necessary after package collection. 
+            The potential values are "Yes/No," where "Yes" signifies that the signature is required, and "No" signifies that it is not required. 
         DeliverySignatureRequired:
           type: boolean
-          description: Denotes whether it is required to get the signature from the person after delivering the package 
+          description: Indicates whether a signature is necessary from the recipient upon package delivery. 
+            The potential values are "Yes/No," where "Yes" signifies that the signature is required, and "No" signifies that it is not required. 
         SuppressUserNotification:
           type: boolean
-          description: This is to denote whether notification has to be sent to the user or not 
+          description: This allows to prevent or disable notifications intended for a user. 
+            The potential values are "Yes/No," where "Yes" signifies that the notifications should not be sent, and "No" signifies that notification has to to be sent.  
         TotalCost:
           type: number
           format: double
-          description:  
+          description: Total cost of the order 
         DeclaredValue:
           type: number
           format: double
-          description: Order declared value
+          description: The amount value declared for the order 
         DriverInstruction:
           type: string
-          description: DriverInstruction 
+          description: A text field that allows for the inclusion of instructions to provide to drivers.  
           minLength: 0
           maxLength: 200 
       example:
