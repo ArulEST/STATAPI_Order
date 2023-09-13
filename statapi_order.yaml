@@ -24,7 +24,7 @@ tags:
     description: |
       The Orders module is designed to streamline the management of orders within the application. It provides a comprehensive set of endpoints and functionalities that allow users to create, retrieve, update, and delete orders. This module serves as the backbone for order processing, ensuring a seamless and efficient experience for the customers and administrators. 
   - name: CreateOrderOutDto_model
-    x-displayName: CreateOrderOutDto
+    x-displayName: Order response 
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/CreateOrderOutDto" />    
   # - name: Collectionlocation_model
