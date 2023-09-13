@@ -100,7 +100,6 @@ paths:
              
               ##### Bad Request, Key Not Found 
              
-              ##### Bad Request - Error 27509
 components:
   schemas:
     Collectionlocation:
