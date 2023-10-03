@@ -433,9 +433,9 @@ components:
           minLength: 0
           maxLength: 50 
         CollectionArrivalWindow:
-          $ref: '#/components/schemas/Collectionlocation'
+          $ref: '#/components/schemas/CollectionArrivalWindow'
         DeliveryArrivalWindow:
-          $ref: '#/components/schemas/Deliverylocation'
+          $ref: '#/components/schemas/DeliveryArrivalWindow'
         CollectionSignatureRequired:
           type: boolean
           description: This indicates whether obtaining a signature from the recipient is necessary after package collection.  
@@ -448,6 +448,10 @@ components:
           type: boolean
           description: This allows to prevent or disable notifications intended for a user.  
             The potential values are "Yes/No," where "Yes" signifies that the notifications should not be sent, and "No" signifies that notification has to be sent.  
+        CollectionLocation:
+          $ref: '#/components/schemas/Collectionlocation'
+        DeliveryLocation:
+          $ref: '#/components/schemas/Deliverylocation'
         DeclaredValue:
           type: number
           format: double
