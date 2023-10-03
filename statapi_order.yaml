@@ -12,12 +12,59 @@ tags:
   - name: Orders
     description: |
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Orders module is designed to streamline the management of orders within the application. It provides a comprehensive set of endpoints and functionalities that allow users to retrieve orders. This module serves as the backbone for order processing, ensuring a seamless and efficient experience for the customers and administrators.
+
+      Key features of the Orders module include: 
+
+
+        •	**Order Creation:** Users can submit new orders through dedicated endpoints, specifying essential details such as collection and delivery location, quantities and price and tracking information. 
+      
+      
+        •	**Order Retrieval:** Retrieve detailed information about existing orders, including order tracking number, status, collection and delivery location, and customer details. 
+      
+      
+        •	**Order Modification:** Update order information, such as quantities, signature flag through secure and straightforward endpoints. 
+      
+      
+        •	**Order Deletion:** When necessary, users can cancel orders, and the module handles the necessary updates and notifications. 
+      
+      
+        •	**Order Status Tracking:** Easily monitor the status of orders, from creation to shipment and delivery, enabling real-time order tracking for customers and staff. 
 x-tagGroups:
   - name: General
     tags:
       - Orders
      
 paths:
+  /api/orders:
+    post:
+      tags:
+      - Orders
+      summary: Create order.
+      operationId: Orders_CreateOrder
+      description: This API endpoint facilitates the creation of a customer's order by capturing essential information such as quantities, prices, and location details. 
+      parameters:
+        - in: body
+          name: orderDto
+          required: true
+          schema:
+            $ref: '#/components/schemas/CreateOrderInDto'
+      responses:
+        "200":
+          description: OK successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderOutDto'
+        "400":
+          description: BadRequest
+      requestBody:
+        name: customerDto
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderInDto'
+        description: Order request body schema description.
+        required: true 
   /api/order/tracking:
     get:
       tags:
@@ -32,19 +79,21 @@ paths:
           required: true
           schema:
             type: string
+          example: 10358950 
         - name: key
           in: query
           description: The system-generated key which is used for authentication purposes.  
           required: true
           schema:
             type: string
+          example: dbba69f2-4023-44d8-8814-16cf62f21c7a  
       responses:
         "200":
           description: OK successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateOrderOutDto'
+                $ref: '#/components/schemas/TrackingOrderOutDto'
         "400":
           description: |
             BadRequest: 
@@ -343,7 +392,8 @@ components:
         LatestTime : "2023-09-29T18:00:00"
       xml:
         name: DeliveryArrivalWindow        
-    CreateOrderOutDto:
+    
+    TrackingOrderOutDto:
       type: object
       properties:
         RegionCode:
@@ -576,5 +626,387 @@ components:
         TotalCost: 11
         DriverInstruction: 
       xml:
-        name: CreateOrderOutDto             
-   
+        name: TrackingOrderOutDto             
+    CreateOrderInDto:
+      type: object
+      required:
+        - CODAmount
+        - Comments
+        - DeclaredValue
+        - Description
+        - PriceSet
+        - PurchaseOrderNumber
+        - Quantity
+        - SignatureType
+        - Weight
+      properties:
+        CODAmount:
+          type: number
+          format: double
+          description: The amount to be collected during the time of delivery 
+        DeliveryCODRequired:
+          type: boolean
+          description: To know whether DeliveryCOD is required or not. 
+        Refrigerated:
+          type: boolean
+          description: This tells whether the product is refrigerated before or during the shipment.  
+            The possible values are “true/false”. True represents that the product is refrigerated and false demotes it is not refrigerated  
+        TrackingNumber:
+          type: string
+          description: The tracking number acts as a unique identifier to track the package in real time during the shipment.
+          minLength: 0
+          maxLength: 50
+        RequestedBy:
+          type: string
+          description: Order requester name
+          minLength: 0
+          maxLength: 50
+        Description:
+          type: string
+          description: It is a free text field where the special instructions about the product, shipment can be added 
+          minLength: 0
+          maxLength: 2000
+        Comments:
+          type: string
+          description: It’s a free text field to add comments  
+          minLength: 0
+          maxLength: 2000
+        CollectionContactName:
+          type: string
+          description: Name of the peron from whom the package should be collected 
+          minLength: 0
+          maxLength: 50
+        CollectionCODRequired:
+          type: boolean
+          description: CollectionCODRequired
+        CollectionSignatureRequired:
+          type: boolean
+          description: Denotes whether it is required to get the signature from the person after collecting the package 
+        Distance:
+          type: number
+          format: double
+          description: Distance estimated for the delivery 
+        Height:
+          type: number
+          format: double
+          description: Height of the package 
+        Width:
+          type: number
+          format: double
+          description: Width of the package 
+        Length:
+          type: number
+          format: double
+          description: Length of the package 
+        Weight:
+          type: number
+          format: double
+          description: Weight of the package  
+        Quantity:
+          type: integer
+          format: int32
+          description: Order quantity 
+        PriceSet:
+          type: string
+          description: PriceSet 
+          minLength: 0
+          maxLength: 50
+        DeclaredValue:
+          type: number
+          format: double
+          description: Order declared value
+        DeliverySignatureRequired:
+          type: boolean
+          description: Denotes whether it is required to get the signature from the person after delivering the package 
+        SuppressUserNotification:
+          type: boolean
+          description: This is to denote whether notification has to be sent to the user or not 
+        PurchaseOrderNumber:
+          type: string
+          description: PurchaseOrderNumber acts as a unique identifier to track the purchase order.
+          minLength: 0
+          maxLength: 50
+        ReferenceNumber:
+          type: string
+          description: ReferenceNumber acts as a unique identifier to track the package order. 
+          minLength: 0
+          maxLength: 50
+        ShortCodeOptIn:
+          type: boolean
+          description: ShortCodeOptIn
+        CollectionLocation:
+          $ref: '#/components/schemas/Collectionlocation'
+        DeliveryLocation:
+          $ref: '#/components/schemas/Deliverylocation'
+        PriceModifier :
+          $ref: '#/components/schemas/OnTimePriceModifier'
+        ShipToInjectionPoint:
+          type: boolean
+          description: It represents shipment to injection point is needed or not 
+        ShippinglabelSize:
+          type: string
+          description: Size of the shipping label 
+          minLength: 0
+          maxLength: 50
+        RXNumber:
+          type: string
+          description: order RXNumber describe
+          minLength: 0
+          maxLength: 250
+        SignatureType:
+          type: string
+          description: Direct/Indirect 
+          minLength: 0
+          maxLength: 50
+        IsAdultSignature:
+          type: boolean
+          description: Denotes the signature is received from an adult  
+        IsCustomerPortal:
+          type: boolean
+          description: IsCustomerPortal
+        IsUpdateOnTime:
+          type: boolean
+          description: IsUpdateOnTime
+      example:
+        CODAmount: 20
+        DeliveryCODRequired: false
+        Refrigerated: false
+        TrackingNumber: ""
+        RequestedBy: null
+        Description: "Fragile Handle with care: Glass material"
+        Comments: null
+        CollectionContactName: null
+        CollectionCODRequired: false
+        CollectionSignatureRequired: false
+        Distance: 0
+        Height: 150
+        Width: 200
+        Length: 250
+        Weight: 200
+        Quantity: 1
+        PriceSet: "b6ec8de4-852a-445f-8f3e-c56b8b3969b5"
+        DeclaredValue: 129
+        DeliverySignatureRequired: true
+        SuppressUserNotification: false
+        PurchaseOrderNumber: "55555"
+        ReferenceNumber: null
+        ShortCodeOptIn: false
+        CollectionLocation:
+          Zone: ""
+          ID: ""
+          ContactName: "Johnsons-6"
+          CompanyName: "Johnsons-6"
+          AddressLine1: "2334 Cedar Crest Blvd"
+          AddressLine2: ""
+          City: "Dallas"
+          State: "TX"
+          PostalCode: "75203"
+          Country: "United States"
+          Comments: null
+          Email: "pharma@yopmail.com"
+          Phone: "3333344445"
+          Category: null
+          LatitudeLongitude: null
+        DeliveryLocation:
+          Zone: ""
+          ID: ""
+          ContactName: "Tom Holland-525"
+          CompanyName: "Medicare-525"
+          AddressLine1: "9050 Markville Dr"
+          AddressLine2: ""
+          City: "Dallas"
+          State: "TX"
+          PostalCode: "75243"
+          Country: "United States"
+          Comments: null
+          Email: "uzumaki@yopmail.com"
+          Phone: "+914444444446"
+          Category: null
+          LatitudeLongitude: null
+        PriceModifier:
+          ID: ""
+          Name: ""
+          CustomValue: 0
+          PercentCommissionable: 0
+          Price: 0
+          Type: 0
+          Input: 0
+        ShipToInjectionPoint: true
+        ShippinglabelSize: ""
+        RXNumber: ""
+        SignatureType: "direct"
+        IsAdultSignature: true
+        IsCustomerPortal: true
+        IsUpdateOnTime: true
+      xml:
+        name: CreateOrderInDto   
+    CreateOrderOutDto:
+      type: object
+      properties:
+        error:
+          type: string
+          description:  
+          minLength: 0
+          maxLength: 2000
+        ID:
+          type: string
+          description: Unique id generated by the STAT system. This is used as identifier
+          minLength: 0
+          maxLength: 50
+        TrackingNumber:
+          type: string
+          description:  
+          minLength: 0
+          maxLength: 50
+        TrackingURL:
+          type: string
+          description: Helps to track and get the status of the movement of the package order.
+          minLength: 0
+          maxLength: 2000
+        BarcodeURL:
+          type: string
+          description: 
+          minLength: 0
+          maxLength: 2000
+        ShippingLabel:
+          type: string
+          description: The label affixed on the package gives comprehensive information regarding the shipment. 
+        VpodDownload:
+          type: string
+          description:
+        SignatureURL:
+          type: string
+          description:
+          minLength: 0
+          maxLength: 2000 
+        Refrigerated:
+          type: boolean
+          description: This tells whether the product is refrigerated before or during the shipment.  
+            The possible values are “true/false”. True represents that the product is refrigerated and false demotes it is not refrigerated  
+        StatusUpdates:
+          $ref: '#/components/schemas/OrderStatusDto'
+        DeliveryContactName:
+          type: string
+          description: 
+          minLength: 0
+          maxLength: 50
+        StatusCode:
+          type: integer
+          format: int32
+          description: 
+        CustomerAccount:
+          type: string
+          description:  
+          minLength: 0
+          maxLength: 50
+        Description:
+          type: string
+          description: It is a free text field where the special instructions about the product, shipment can be added 
+          minLength: 0
+          maxLength: 2000
+        Comments:
+          type: string
+          description: It’s a free text field to add comments  
+          minLength: 0
+          maxLength: 2000
+        PriceSet:
+          type: string
+          description: PriceSet 
+          minLength: 0
+          maxLength: 50 
+        CollectionArrivalWindow:
+          $ref: '#/components/schemas/Collectionlocation'
+        DeliveryArrivalWindow:
+          $ref: '#/components/schemas/Deliverylocation'
+        CollectionSignatureRequired:
+          type: boolean
+          description: Denotes whether it is required to get the signature from the person after collecting the package
+        DeliverySignatureRequired:
+          type: boolean
+          description: Denotes whether it is required to get the signature from the person after delivering the package 
+        SuppressUserNotification:
+          type: boolean
+          description: This is to denote whether notification has to be sent to the user or not 
+        TotalCost:
+          type: number
+          format: double
+          description:  
+        DeclaredValue:
+          type: number
+          format: double
+          description: Order declared value
+        DriverInstruction:
+          type: string
+          description: DriverInstruction 
+          minLength: 0
+          maxLength: 200 
+      example:
+        error: null
+        ID: "12735950"
+        TrackingNumber: "S2023090002912"
+        TrackingURL: "https://apps.statovernight.com/MyOrder/?id=nIF2IBUM_ECFnw_-W7sqpA"
+        BarcodeURL: "https://statqa.azurewebsites.net/OrdersManagement/Orders/OrderShippingLabel?orderId=S2023090002912&customerId=43532938-be8d-43c3-b9c7-cc6ea8441f93"
+        ShippingLabel: "https://statapi-development.azurewebsites.net//api/DownloadLabel?TrackingNumber=S2023090002912&Type=ShippingLabel&CustomerId=43532938-be8d-43c3-b9c7-cc6ea8441f93&Size=4x8"
+        VpodDownload: null
+        SignatureURL: null
+        Refrigerated: false
+        StatusUpdates: 
+          Date: "2023-09-05T15:20:38.0755622Z"
+          Description: "Order received"
+          Exception: false
+          ExceptionCode: 0
+          LocalTime: "2023-09-05T10:20:38.0755622"
+          Region: Irving              
+        DeliveryContactName: null
+        StatusCode: 1
+        CustomerAccount: "78554512"
+        Description: "Fragile Handle with care: Glass material"
+        Comments: ""
+        Customer: "1369"
+        PriceSet: ""
+        CollectionArrivalWindow: 
+          EarliestTime: "2023-09-05T15:20:31.539697Z"
+          LatestTime: "2023-09-06T02:00:00Z"
+        DeliveryArrivalWindow: 
+          EarliestTime: "2023-09-06T12:00:00Z"
+          LatestTime: "2023-09-06T16:00:00Z"
+        CollectionSignatureRequired: false
+        DeliverySignatureRequired: false
+        SuppressUserNotification: false
+        CollectionLocation: 
+          Zone: ""
+          ID: ""
+          ContactName: "Johnsons"
+          CompanyName: "PKR pharmacy"
+          AddressLine1: "2334 Cedar Crest Blvd"
+          AddressLine2: null
+          City: "Dallas"
+          State: "TX"
+          PostalCode: "75203"
+          Country: "United States"
+          Comments: null
+          Email: "pharma@yopmail.com"
+          Phone: "3333344445"
+          Category: null
+          LatitudeLongitude: null
+        DeliveryLocation: 
+          Zone: ""
+          ID: ""
+          ContactName: "Tom Holland"
+          CompanyName: "Medicare"
+          AddressLine1: "9050 Markville Dr"
+          AddressLine2: null
+          City: "Dallas"
+          State: "TX"
+          PostalCode: "75243-1254"
+          Country: "United States"
+          Comments: null
+          Email: "sample01@yopmail.com"
+          Phone: ""
+          Category: null
+          LatitudeLongitude: null
+        DeclaredValue: 129.0
+        TotalCost: 0.0
+        DriverInstruction: "Drop the package at the front door"
+      xml:
+        name: CreateOrderOutDto  
