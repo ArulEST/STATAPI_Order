@@ -4,14 +4,13 @@
     "title": "STATAPI-Public",
     "x-logo": {
       "url": "../STATAPI_V1/logo.png",
-      "altText": "STAT_logo",
-      "height": "150"
+      "altText": "STAT logo"
     }
   },
   "tags": [
     {
       "name": "Orders",
-      "description": "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Orders module is designed to streamline the management of orders within the application. It provides a comprehensive set of endpoints and functionalities that allow users to retrieve orders. This module serves as the backbone for order processing, ensuring a seamless and efficient experience for the customers and administrators.\n<h4>Order Tracking</h4>\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This API endpoint helps in retrieving the order status during the shipment. \n"
+      "description": "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Orders module is designed to streamline the management of orders within the application. It provides a comprehensive set of endpoints and functionalities that allow users to retrieve orders. This module serves as the backbone for order processing, ensuring a seamless and efficient experience for the customers and administrators.\n"
     }
   ],
   "x-tagGroups": [
@@ -28,7 +27,8 @@
         "tags": [
           "Orders"
         ],
-        "summary": "This API endpoint enables real-time order tracking throughout the shipment process.",
+        "summary": "Order Tracking",
+        "description": "This API endpoint helps in retrieving the order status during the shipment.",
         "operationId": "Orders_GetOrdersPublic",
         "parameters": [
           {
