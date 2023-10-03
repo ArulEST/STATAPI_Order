@@ -4,7 +4,7 @@
     "title": "STATAPI-Public",
     "x-logo": {
       "url": "../STATAPI_V1/logo.png",
-      "altText": "STAT logo",
+      "altText": "STAT_logo",
       "height": "150"
     }
   },
