@@ -3,7 +3,7 @@
   "info": {
     "title": "STATAPI-Public",
     "x-logo": {
-      "url": "../Redoc/Image/logo.png",
+      "url": "../Image/logo.png",
       "altText": "STAT logo"
     }
   },
