@@ -10,7 +10,7 @@
   "tags": [
     {
       "name": "Orders",
-      "description": "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Orders module is designed to streamline the management of orders within the application. It provides a comprehensive set of endpoints and functionalities that allow users to retrieve orders. This module serves as the backbone for order processing, ensuring a seamless and efficient experience for the customers and administrators.\n"
+      "description": "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Orders module is designed to streamline the management of orders within the application. It provides a comprehensive set of endpoints and functionalities that allow users to retrieve orders. This module serves as the backbone for order processing, ensuring a seamless and efficient experience for the customers and administrators.\n\nKey features of the Orders module include: \n\n\n  •  **Order Creation:** Users can submit new orders through dedicated endpoints, specifying essential details such as collection and delivery location, quantities and price and tracking information. \n\n\n  •  **Order Retrieval:** Retrieve detailed information about existing orders, including order tracking number, status, collection and delivery location, and customer details. \n\n\n  •  **Order Modification:** Update order information, such as quantities, signature flag through secure and straightforward endpoints. \n\n\n  •  **Order Deletion:** When necessary, users can cancel orders, and the module handles the necessary updates and notifications. \n\n\n  •  **Order Status Tracking:** Easily monitor the status of orders, from creation to shipment and delivery, enabling real-time order tracking for customers and staff. \n"
     }
   ],
   "x-tagGroups": [
@@ -22,31 +22,21 @@
     }
   ],
   "paths": {
-    "/api/order/tracking": {
-      "get": {
+    "/api/orders": {
+      "post": {
         "tags": [
           "Orders"
         ],
-        "summary": "Order Tracking",
-        "description": "This API endpoint helps in retrieving the order status during the shipment.",
-        "operationId": "Orders_GetOrdersPublic",
+        "summary": "Create order.",
+        "operationId": "Orders_CreateOrder",
+        "description": "This API endpoint facilitates the creation of a customer's order by capturing essential information such as quantities, prices, and location details.",
         "parameters": [
           {
-            "name": "trackingNumber",
-            "in": "query",
-            "description": "The tracking number acts as a unique identifier to track the package in real-time during the shipment.",
+            "in": "body",
+            "name": "orderDto",
             "required": true,
             "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "key",
-            "in": "query",
-            "description": "The system-generated key which is used for authentication purposes.",
-            "required": true,
-            "schema": {
-              "type": "string"
+              "$ref": "#/components/schemas/CreateOrderInDto"
             }
           }
         ],
@@ -62,7 +52,66 @@
             }
           },
           "400": {
-            "description": "BadRequest: \n\n  ##### Tracking Number Not Provided\n\n  ##### Public Key Not Provided\n  \n  ##### Permission denied.\n \n  ##### Bad Request, Key Not Found \n \n"
+            "description": "BadRequest: \n\n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Customer not located or authenticated.\n\n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Either this order\\'s collection or delivery AddressLine1 is not available.\n  \n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Either this order\\'s collection or delivery City code is not available.\n \n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Either this order\\'s collection or delivery State is not available. \n\n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Either this order\\'s collection or delivery zip code is not available.\n\n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Either this order\\'s delivery zip code is not serviceable at all or it cannot be serviced from your local service area. Please contact STAT customer service if you believe this to be inaccurate. We apologize for the inconvenience.\n  \n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Invalid  Shipping Label Size\n \n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ModelState is Not Valid\n\n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Not authorized.\n\n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Order Could not Save Correctly, please check object Body\n  \n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; orders with adult signature required to be direct\n \n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Selected price set not available at this time. \" +\"Use api/PriceSets to get current list of available customer price sets.\n"
+          }
+        },
+        "requestBody": {
+          "name": "customerDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderInDto"
+              }
+            }
+          },
+          "description": "Order request body schema description.",
+          "required": true
+        }
+      }
+    },
+    "/api/order/tracking": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Order Tracking",
+        "description": "This API endpoint facilitates the retrieval of shipment order status information, providing data for the past 30 days.",
+        "operationId": "Orders_GetOrdersPublic",
+        "parameters": [
+          {
+            "name": "trackingNumber",
+            "in": "query",
+            "description": "The tracking number acts as a unique identifier to track the package in real-time during the shipment.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": 10358950
+          },
+          {
+            "name": "key",
+            "in": "query",
+            "description": "The system-generated key which is used for authentication purposes.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "dbba69f2-4023-44d8-8814-16cf62f21c7a"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrackingOrderOutDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest: \n\n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Tracking Number Not Provided\n\n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Public Key Not Provided\n  \n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Permission denied.\n \n  ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Bad Request, Key Not Found \n \n"
           }
         }
       }
@@ -415,7 +464,45 @@
           "name": "DeliveryArrivalWindow"
         }
       },
-      "CreateOrderOutDto": {
+      "OnTimePriceModifier": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "description": "Unique id generated by the stat system. This is used as identifier"
+          },
+          "Name": {
+            "type": "string",
+            "description": "The name of the ontime price"
+          },
+          "CustomValue": {
+            "type": "number",
+            "format": "double",
+            "description": "The name of the custom value"
+          },
+          "PercentCommissionable": {
+            "type": "number",
+            "format": "double",
+            "description": "The value of the commissionable percent"
+          },
+          "Price": {
+            "type": "number",
+            "format": "double",
+            "description": "The value of the price"
+          },
+          "Type": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The value of the type"
+          },
+          "Input": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The value of the input"
+          }
+        }
+      },
+      "TrackingOrderOutDto": {
         "type": "object",
         "properties": {
           "RegionCode": {
@@ -693,6 +780,394 @@
           "DeclaredValue": 10,
           "TotalCost": 11,
           "DriverInstruction": null
+        },
+        "xml": {
+          "name": "TrackingOrderOutDto"
+        }
+      },
+      "CreateOrderInDto": {
+        "type": "object",
+        "required": [
+          "CODAmount",
+          "Comments",
+          "DeclaredValue",
+          "Description",
+          "PriceSet",
+          "PurchaseOrderNumber",
+          "Quantity",
+          "SignatureType",
+          "Weight"
+        ],
+        "properties": {
+          "OrderId": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The ID generated by the STAT system acts as a unique identifier for an order."
+          },
+          "UID": {
+            "type": "string",
+            "description": "The ID generated by the STAT system acts as a unique identifier for an order.",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "OrderIdLink": {
+            "type": "string",
+            "description": "The unique link to exchange between STAT and OnTime for a specific order.",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "CustomerId": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The system-generated ID for customers, serving as a unique identifier."
+          },
+          "Customer": {
+            "type": "string",
+            "description": "The customer for whom the order will be placed.",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "BarcodeURL": {
+            "type": "string",
+            "description": "The BarcodeURL helps to check the status of the ordered product.",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "Refrigerated": {
+            "type": "boolean",
+            "description": "This tells whether the product is refrigerated before or during the shipment. The possible values are “true/false”. True represents that the product is refrigerated and false demotes it is not refrigerated"
+          },
+          "ID": {
+            "type": "string",
+            "description": "The ID generated by the system serves as a unique identifier.",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "TrackingNumber": {
+            "type": "string",
+            "description": "The tracking number acts as a unique identifier to track the package in real time during the shipment.",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "ShippinglabelSize": {
+            "type": "string",
+            "description": "Represents the size of the shipping label",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "Format": {
+            "type": "string",
+            "description": "The format in which the file should be downloaded.",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "RequestedBy": {
+            "type": "string",
+            "description": "The individual who requested the order ",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "Description": {
+            "type": "string",
+            "description": "This is a free text field where the special instructions about the product, shipment are added",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "Comments": {
+            "type": "string",
+            "description": "This is a free text field where the special instructions about the product, shipment are added",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "DateSubmitted": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date of order submission"
+          },
+          "RouteName": {
+            "type": "string",
+            "description": "The designated shipping route for the order",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "StatusLevel": {
+            "type": "number",
+            "format": "double",
+            "description": "This signifies the current order status level"
+          },
+          "CollectionArrivalDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The scheduled date for the package to be collected from the specified collection location."
+          },
+          "CollectionContactName": {
+            "type": "string",
+            "description": "Name of the person from whom the package should be collected",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "CollectionCODRequired": {
+            "type": "boolean",
+            "description": "This indicates whether collection COD is required The potential values are \"Yes/No,\" where \"Yes\" signifies that the COD is required, and \"No\" signifies that it is not required."
+          },
+          "CODAmount": {
+            "type": "number",
+            "format": "double",
+            "description": "The amount to be collected during the time of delivery"
+          },
+          "CollectionSignatureRequired": {
+            "type": "boolean",
+            "description": "This indicates whether obtaining a signature from the recipient is necessary after package collection. The potential values are \"Yes/No,\" where \"Yes\" signifies that the signature is required, and \"No\" signifies that it is not required."
+          },
+          "Weight": {
+            "type": "number",
+            "format": "double",
+            "description": "Weight of the package "
+          },
+          "Quantity": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Order quantity"
+          },
+          "PriceSet": {
+            "type": "string",
+            "description": "Priceset of the package",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "DeclaredValue": {
+            "type": "number",
+            "format": "double",
+            "description": "The amount value declared for the order"
+          },
+          "DeliveryArrivalDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The scheduled date for the package to be delivered at the specified location"
+          },
+          "DeliverySignatureRequired": {
+            "type": "boolean",
+            "description": "Indicates whether a signature is necessary from the recipient upon package delivery. The potential values are \"Yes/No,\" where \"Yes\" signifies that the signature is required, and \"No\" signifies that it is not required."
+          },
+          "SignatureType": {
+            "type": "string",
+            "description": "This denotes whether the signature should be received from the desired contact.  The possible values are “Direct/Indirect” where “Direct” signifies that the signature needs to be received from the desired person and “Indirect” signifies that it is not needed to be collected from the desired person",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "IsAdultSignature": {
+            "type": "boolean",
+            "description": "Denotes the signature is received from an adult.   The possible values are “Yes/No” where “Yes” signifies that the signature was received from an adult person and “No” signifies that it is not an adult signature "
+          },
+          "DeliveryCODRequired": {
+            "type": "boolean",
+            "description": "To determine if DeliveryCOD is necessary or not. The options are <yes/no>. Example: When \"Yes\" is selected, Delivery COD is mandatory, while \"No\" indicates it is not required."
+          },
+          "SuppressUserNotification": {
+            "type": "boolean",
+            "description": "This allows to prevent or disable notifications intended for a user.  The potential values are \"Yes/No,\" where \"Yes\" signifies that the notifications should not be sent, and \"No\" signifies that notification has to be sent."
+          },
+          "PurchaseOrderNumber": {
+            "type": "string",
+            "description": "PurchaseOrderNumber serves as a unique identifier to track the purchase order.",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "ReferenceNumber": {
+            "type": "string",
+            "description": "ReferenceNumber serves as a unique identifier to track the purchase order.",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "ShortCodeOptIn": {
+            "type": "boolean",
+            "description": "It signifies whether a shortcodeoptin is required or not. The potential values are \"Yes/No,\" where \"Yes\" signifies that the shortcodeoptin is required, and \"No\" signifies that it is not required."
+          },
+          "CollectionLocation": {
+            "$ref": "#/components/schemas/Collectionlocation"
+          },
+          "DeliveryLocation": {
+            "$ref": "#/components/schemas/Deliverylocation"
+          },
+          "PriceModifier": {
+            "type": "array",
+            "$ref": "#/components/schemas/OnTimePriceModifier"
+          },
+          "IsCustomerPortal": {
+            "type": "boolean",
+            "description": "It signifies whether the customerportal is required or not. The potential values are \"Yes/No,\" where \"Yes\" signifies that the customerportal is required, and \"No\" signifies that it is not required."
+          },
+          "IsUpdateOnTime": {
+            "type": "boolean",
+            "description": "It signifies whether the update on time is required or not. The potential values are \"Yes/No,\" where \"Yes\" signifies that the update on time is required, and \"No\" signifies that it is not required."
+          }
+        },
+        "example": {
+          "OrderId": 0,
+          "UID": null,
+          "OrderIdLink": null,
+          "CustomerId": 1369,
+          "Customer": null,
+          "BarcodeURL": null,
+          "Refrigerated": false,
+          "ID": null,
+          "TrackingNumber": "",
+          "ShippingLabelSize": "4x8",
+          "Format": "pdf",
+          "RequestedBy": null,
+          "BasePriceType": null,
+          "Description": "Fragile Handle with care: Glass material",
+          "Comments": "Inflammable",
+          "DateSubmitted": null,
+          "RouteName": null,
+          "StatusLevel": null,
+          "CollectionArrivalDate": null,
+          "CollectionContactName": null,
+          "CollectionCODRequired": false,
+          "CODAmount": 20,
+          "CollectionSignatureRequired": false,
+          "Weight": 200,
+          "Quantity": 1,
+          "PriceSet": "b6ec8de4-852a-445f-8f3e-c56b8b3969b5",
+          "DeclaredValue": 129,
+          "DeliveryArrivalDate": null,
+          "DeliverySignatureRequired": true,
+          "SignatureType": "direct",
+          "IsAdultSignature": true,
+          "DeliveryCODRequired": false,
+          "SuppressUserNotification": false,
+          "PurchaseOrderNumber": "55555",
+          "ReferenceNumber": null,
+          "ShortCodeOptIn": false,
+          "CollectionLocation": {
+            "Zone": null,
+            "ID": "",
+            "ContactName": "Johnsons-6",
+            "CompanyName": "Johnsons-6",
+            "AddressLine1": "2334 Cedar Crest Blvd",
+            "AddressLine2": "",
+            "City": "Dallas",
+            "State": "TX",
+            "PostalCode": "75203",
+            "Country": "United States",
+            "Comments": null,
+            "Email": "pharma@yopmail.com",
+            "Phone": "3333344445",
+            "Category": null,
+            "LatitudeLongitude": null
+          },
+          "DeliveryLocation": {
+            "Zone": null,
+            "ID": "",
+            "ContactName": "Tom Holland-525",
+            "CompanyName": "Medicare-525",
+            "AddressLine1": "10311 Joaquin Dr",
+            "AddressLine2": "",
+            "City": "Dallas",
+            "State": "TX",
+            "PostalCode": "75229",
+            "Country": "United States",
+            "Comments": null,
+            "Email": "uzumaki@yopmail.com",
+            "Phone": "+914444444446",
+            "Category": null,
+            "LatitudeLongitude": null
+          },
+          "PriceModifier": [
+
+          ],
+          "IsCustomerPortal": true,
+          "IsUpdateOnTime": true
+        },
+        "xml": {
+          "name": "CreateOrderInDto"
+        }
+      },
+      "CreateOrderOutDto": {
+        "type": "object",
+        "properties": {
+          "UID": {
+            "type": "string",
+            "description": "The ID generated by the STAT system acts as a unique identifier for an order",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "TrackingNumber": {
+            "type": "string",
+            "description": "The tracking number acts as a unique identifier to track the package in real-time during the shipment.",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "CollectionLocation": {
+            "$ref": "#/components/schemas/CollectionLocation"
+          },
+          "DeliveryLocation": {
+            "$ref": "#/components/schemas/DeliveryLocation"
+          },
+          "Refrigerated": {
+            "type": "boolean",
+            "description": "This indicates whether the product is refrigerated prior to or during shipment. The potential values are \"Yes/No,\" where \"Yes\" signifies that the product is refrigerated, and \"No\" signifies that it is not refrigerated."
+          },
+          "Description": {
+            "type": "string",
+            "description": "This is a free text field where the special instructions about the product, shipment are added ",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "Comments": {
+            "type": "string",
+            "description": "This is a free text field where the special instructions about the product, shipment are added",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "CollectionSignatureRequired": {
+            "type": "boolean",
+            "description": "This indicates whether obtaining a signature from the recipient is necessary after package collection. The potential values are \"Yes/No,\" where \"Yes\" signifies that the signature is required, and \"No\" signifies that it is not required."
+          },
+          "DeliverySignatureRequired": {
+            "type": "boolean",
+            "description": "Indicates whether a signature is necessary from the recipient upon package delivery. The potential values are \"Yes/No,\" where \"Yes\" signifies that the signature is required, and \"No\" signifies that it is not required."
+          },
+          "SuppressUserNotification": {
+            "type": "boolean",
+            "description": "This allows to prevent or disable notifications intended for a user. The potential values are \"Yes/No,\" where \"Yes\" signifies that the notifications should not be sent, and \"No\" signifies that notification has to be sent."
+          }
+        },
+        "example": {
+          "UID": "7e30f2b8-b356-4a02-948c-4b7ebb166785",
+          "TrackingNumber": "",
+          "collectionLocation": {
+            "ContactName": "Johnsons-6",
+            "CompanyName": "Johnsons-6",
+            "AddressLine1": "2334 Cedar Crest Blvd",
+            "AddressLine2": "",
+            "City": "Dallas",
+            "State": "TX",
+            "PostalCode": "75203",
+            "Country": "United States",
+            "Comments": null,
+            "Email": "pharma@yopmail.com",
+            "Phone": "3333344445"
+          },
+          "deliveryLocation": {
+            "ContactName": "Tom Holland-525",
+            "CompanyName": "Medicare-525",
+            "AddressLine1": "10311 Joaquin Dr",
+            "AddressLine2": "",
+            "City": "Dallas",
+            "State": "TX",
+            "PostalCode": "75229",
+            "Country": "United States",
+            "Comments": null,
+            "Email": "uzumaki@yopmail.com",
+            "Phone": "+914444444446"
+          },
+          "Refrigerated": false,
+          "Description": "Fragile Handle with care: Glass material",
+          "Comments": "Inflammable",
+          "CollectionSignatureRequired": false,
+          "DeliverySignatureRequired": true,
+          "SuppressUserNotification": false
         },
         "xml": {
           "name": "CreateOrderOutDto"
