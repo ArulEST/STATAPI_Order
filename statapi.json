@@ -27,7 +27,7 @@
         "tags": [
           "Orders"
         ],
-        "summary": "Create order.",
+        "summary": "Create an Order",
         "operationId": "Orders_CreateOrder",
         "description": "This API endpoint facilitates the creation of a customer's order by capturing essential information such as quantities, prices, and location details.",
         "parameters": [
