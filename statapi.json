@@ -22,7 +22,7 @@
     }
   ],
   "paths": {
-    "/api/orders": {
+    "/api/V2/Createorder": {
       "post": {
         "tags": [
           "Orders"
