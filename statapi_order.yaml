@@ -79,8 +79,9 @@ paths:
     get:
       tags:
         - Orders
-      summary: This API endpoint facilitates the retrieval of shipment order status information.  
+      summary: Order Tracking
       operationId: Orders_Getorderdetails
+      description: This API endpoint facilitates the retrieval of shipment order status information.  
       parameters:
         - in: path
           name: id
@@ -88,6 +89,7 @@ paths:
           required: true
           schema:
             type: string
+          example: T23023232327  
       responses:
         "200":
           description: OK successful operation
@@ -293,15 +295,9 @@ components:
     CreateOrderInDto:
       type: object
       required:
-        - CODAmount
-        - Comments
-        - DeclaredValue
-        - Description
         - PriceSet
-        - PurchaseOrderNumber
-        - Quantity
-        - SignatureType
-        - Weight
+        - Collectionlocation
+        - Deliverylocation
       properties:
         Refrigerated:
           type: boolean
@@ -509,7 +505,7 @@ components:
       example:
         UID: 7e30f2b8-b356-4a02-948c-4b7ebb166785
         TrackingNumber: ''
-        collectionLocation:
+        CollectionLocation:
           ContactName: Johnsons-6
           CompanyName: Johnsons-6
           AddressLine1: 2334 Cedar Crest Blvd
@@ -521,7 +517,7 @@ components:
           Comments:
           Email: pharma@yopmail.com
           Phone: '3333344445'
-        deliveryLocation:
+        DeliveryLocation:
           ContactName: Tom Holland-525
           CompanyName: Medicare-525
           AddressLine1: 10311 Joaquin Dr
