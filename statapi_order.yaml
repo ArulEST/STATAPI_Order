@@ -5,8 +5,8 @@ info:
   title: STAT API Documentation
   x-logo:
     # url: '../logo.png'
-    # url: 'https://arulest.github.io/STATAPI_Order/logo.png'
-    url: "../vNEXT_V1/logo.png"
+    url: 'https://arulest.github.io/STATAPI_Order/logo.png'
+    # url: "../vNEXT_V1/logo.png"
     altText: STAT logo
 
 tags:
