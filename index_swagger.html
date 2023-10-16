@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAT API</title>
+    <style>
+        .language-json {
+          white-space: pre-wrap !important;
+        }
+        .api-content .api-info > p {
+          display: none !important;
+        }
+        .swagger-ui select {
+          padding: 0px 0px 0px 0px !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="redoc-container"></div>
+     <script src="https://cdn.jsdelivr.net/npm/redoc@2.0.0-rc.55/bundles/redoc.standalone.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/gh/wll8/redoc-try@1.4.8/dist/try.js"></script>
+    <script>
+        // initTry(`https://petstore.swagger.io/v2/swagger.json`)
+        initTry({
+            openApi: `statapi_swagger.yaml`,
+            hideDownloadButton: true,
+            ...window.initTryOptions,
+            // redocVersion: `2.0.0-rc.48`, // Used to handle compatibility issues, if not specified, read from the URL
+            // onlySwagger: true,
+            tryText: `TRY OUT`, // Try button text
+            // trySwaggerInApi: true, // Whether to display swagger debugging window under api?
+            // redocOptions: {enableConsole: true}, // Or the format is an array: `[specOrSpecUrl?, options?, element?, callback?]`
+            // swaggerOptions: {dom_id: `#swagger-ui`},
+            // pure: false, // Concise mode, hide some existing elements of redoc
+            authBtnText: `AUTHORIZE`,
+        })
+    </script>
+</body>
+</html>
