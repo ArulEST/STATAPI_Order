@@ -4,97 +4,11 @@ info:
   # version: v1
   title: STAT API Documentation
   x-logo:
-    # url: '../logo.png'
     url: 'https://arulest.github.io/STATAPI_Order/logo.png'
     # url: "../vNEXT_V1/logo.png"
     altText: STAT logo
 
 tags:
-  - name: Cosmos 
-    description: |
-      # Push Order status history to Cosmos 
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The order's status undergoes changes as it progresses through various stages during shipment, starting from order submission until it is delivered. To maintain a comprehensive order history, a dedicated mechanism has been implemented to record and synchronize this history with Cosmos.  
-      
-      In this process, three new columns have been introduced in the order history table named TRK.OrderStatusHistory, which facilitate the synchronization of order statuses with a Service Bus and subsequently with Cosmos: 
-      
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>IsSyncCosmosUpdated:</b> This column indicates whether a record has been synchronized in Cosmos. The default value is set to False. 
-      
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>IsSyncCosmosUpdateEnabled:</b> This column serves as a condition that determines whether a record should be pushed to Cosmos.  
-      
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>IsPushCosmosUpdated:</b> This column signifies whether a record has been successfully pushed to Cosmos. The default value is set to False. 
-      
-      To achieve this synchronization, a timer function is employed to select updated records from the past 24 hours and evaluate with the following conditions: 
-      
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If IsSyncCosmosUpdated is set to False, IsSyncCosmosUpdateEnabled is True, and IsPushCosmosUpdated is False, the updated record will be pushed to Cosmos.  
-      
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When IsSyncCosmosUpdateEnabled is set to False, no push operation will take place.  
-      
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Once a record is successfully pushed to Cosmos, IsPushCosmosUpdated will be set to True, confirming the successful push.  
-      
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When the record is successfully created in Cosmos, IsSyncCosmosUpdated will be set to True.  
-      
-      Upon the completion of this process, the status of the three columns will be as follows:
-      
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IsSyncCosmosUpdated: True 
-      
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IsSyncCosmosUpdateEnabled: True  
-      
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IsPushCosmosUpdated: True 
-  - name: Webhook
-    description: |
-      # Create Webhook 
-      <h3><b>To set up a webhook in the STAT portal, follow these steps:</b></h3>
-
-      Navigate to the main menu on the STAT portal at
-
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; https://statqastage.azurewebsites.net
-      
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; From the main menu, select "Manage Customer" under user management.  
-
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Next to each client, click on "View" to access their details.  
-
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Within the client's details, locate and click the "Create Webhook" button. 
-
-      In the provided form, do the following:  
-
-      <ul>
-        <li>Choose the required order status value.</li>
-        <li>Enter the Webhook URL.</li>
-        <li>Add any necessary Webhook parameters.</li>
-        <li>Note that Authentication is optional. If selected, provide both the key and value data.</li>
-      </ul>   
-      
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Once the details are submitted, whether with or without parameters, they will be securely stored in the table trk.WebhookNotification. 
-      
-      # OTServer: 
-      <img src="https://arulest.github.io/STATAPI_order/Codesnippet/OTServer/vnext_otserver_1.png" />
-      
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In the OTServer, the QueueManager class periodically checks the status of QueueManagerCustomerWebhook every 10 seconds. If the status is false, the ProcessWebHookNotifications method is executed.  
-     
-      <img src="https://arulest.github.io/STATAPI_order/Codesnippet/OTServer/vnext_otserver_2.png" />
-     
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Records from the trk.WebhookNotification table are selected based on the following conditions:
-      <ul>
-        <li>The InsertDate must be within the last 10 days.  </li>
-        <li>The Retry count should be less than 10.  </li>
-        <li>The Status should not be equal to "Success."</li>
-        <li>Note that Authentication is optional. If selected, provide both the key and value data.</li>
-      </ul>   
-
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The trk.WebhookNotification.WebhookUrl and trk.WebhookNotification.WebhookParams of the retrieved records are used in an HTTPS request. The response, whether it is a success or failure, is stored in the trk.WebhookNotification.Status and trk.WebhookNotification.Message columns of the same table.
-
-      # Service Bus:  
-      <img src="https://arulest.github.io/STATAPI_order/Codesnippet/ServiceBus/vnext_servicebus_1.png" />
-       
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In the Service Bus, the customerwebhooknotification method is serialized and deserialized to obtain the WebhooknotificationId, which is then passed to the ProcessCustomerWebhookNotification method. 
-     
-      <img src="https://arulest.github.io/STATAPI_order/Codesnippet/ServiceBus/vnext_servicebus_2.png" />
-    
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In the SystemFeatureFlags table, a check is performed to ensure that the column ProcessName is equal to "ProcessName.QueueManagerCustomerWebhook," and the IsServiceBusEnable column is set to true. If this condition is met, the parameter value WebhooknotificationId is checked for its existence in the WebhookNotifications table.  
-      
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If the value returned is 0, the process ends. Otherwise, a record is fetched from the trk.WebhookNotification table
-
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The trk.WebhookNotification.WebhookUrl and trk.WebhookNotification.WebhookParams of the retrieved records are used in an HTTPS request. The response, whether it is a success or failure, is stored in the trk.WebhookNotification.Status and trk.WebhookNotification.Message columns of the same table.
   - name: Orders
     description: |
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Orders module is designed to streamline the management of orders within the application. It provides a comprehensive set of endpoints and functionalities that allow users to retrieve orders. This module serves as the backbone for order processing, ensuring a seamless and efficient experience for the customers and administrators.
@@ -109,16 +23,12 @@ tags:
       
       
         •	**Order Status Tracking:** Easily monitor the status of orders, from creation to shipment and delivery, enabling real-time order tracking for customers and staff. 
-  
       
 x-tagGroups:
   - name: General
     tags:
-      - Cosmos
-      - Webhook
       - Orders
       
-     
 paths:
   /api/V2/Createorder:
     post:
