@@ -1,0 +1,1983 @@
+---
+swagger: '2.0'
+info:
+  version: v1
+  title: STATAPI Public
+  x-logo:
+    url: "../STATAPI_V1/logo.png"
+    altText: Ameriship logo
+host: https://statapi-testing.azurewebsites.net
+schemes:
+- http
+- https
+tags:
+  - name: Orders
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Orders module is designed to streamline the management of orders within the application. It provides a comprehensive set of endpoints and functionalities that allow users to retrieve orders. This module serves as the backbone for order processing, ensuring a seamless and efficient experience for the customers and administrators.
+
+      Key features of the Orders module include: 
+
+
+        •	**Order Creation:** Users can submit new orders through dedicated endpoints, specifying essential details such as collection and delivery location, quantities and price and tracking information. 
+      
+      
+        •	**Order Retrieval:** Retrieve detailed information about existing orders, including order tracking number, status, collection and delivery location, and customer details. 
+      
+      
+        •	**Order Status Tracking:** Easily monitor the status of orders, from creation to shipment and delivery, enabling real-time order tracking for customers and staff. 
+  - name: Customers
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Customers API facilitates interaction with and management of customer data. It offers a standardized method for creating, updating, and deleting customer records, as well as accessing and retrieving customer-related information, including profiles and order history, among other relevant data. This API is employed in improving the overall customer experience and enabling the provision of personalized services. 
+  - name: ServiceAreas
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Service Areas API enables users to access and oversee data associated with designated service areas. It aids in determining service coverage by examining a customer's zipcode and region, identifying areas within the service proximity for efficient order delivery. 
+  - name: PriceSets
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A Price Set API provides a method for calculating and retrieving the price or cost associated with a specific order.  
+
+x-tagGroups:
+  - name: General
+    tags:
+      - Orders   
+      - OrderLabel  
+      - Customers  
+      - PriceSets  
+      - ServiceAreas  
+
+paths:
+  "/api/customersForPickup/{UpdatedDate}":
+    get:
+      tags:
+      - Customers
+      summary: Get customer details
+      description: This endpoint facilitates the retrieval of a list of customers
+        based on their UpdatedDate
+      operationId: Customers_customersForPickup
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: UpdatedDate
+        in: path
+        description: ''
+        required: true
+        type: string
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              CustomerId: '1369'
+              DisplayName: 'SAMPLE: Pacific Northwest Supply'
+              AccountNumber: '911834035'
+        '400':
+          description: BadRequest
+  "/api/Customers":
+    get:
+      tags:
+      - Customers
+      summary: Get a list of customers
+      description: This endpoint facilitates the retrieval of a list of customers.
+      operationId: Customers_GetCustomers
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              CustomerId: 1369
+              DisplayName: 'SAMPLE: Pacific Northwest Supply'
+              PriceSets:
+              ID: ''
+              Name: 'SAMPLE: Pacific Northwest Supply'
+              PrimaryContactName: 'SAMPLE: Pacific Northwest Supply'
+              AddressLine1: 2334 Cedar Crest Blvd
+              AddressLine2: ''
+              City: Medford
+              State: OR
+              PostalCode: '97504'
+              Country: USA
+              Phone: "(541) 178-4197"
+              Fax: "(541) 271-2232"
+              Email: Pacific@gmail.com
+              Website: www.pacregsupply.com
+              AccountNumber: '911834035'
+              TimeZone: ''
+        '400':
+          description: BadRequest
+    post:
+      tags:
+      - Customers
+      summary: Create customer
+      description: This endpoint assists in the creation of a new customer within
+        the system.
+      operationId: Customers_CreateCustomer
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: customerDto
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/OnTime.Core.Business.DTOs.CustomerDto"
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: BadRequest
+  "/api/Customers/{id}":
+    get:
+      tags:
+      - Customers
+      summary: Get customer details
+      description: This endpoint facilitates the retrieval of a list of customers
+        based on their ID
+      operationId: Customers_GetCustomer
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: id
+        in: path
+        description: ID that serves as a unique identifier for a customer
+        required: true
+        type: integer
+        format: int32
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              CustomerId: 1369
+              DisplayName: 'SAMPLE: Pacific Northwest Supply'
+              PriceSets:
+              ID: ''
+              Name: 'SAMPLE: Pacific Northwest Supply'
+              PrimaryContactName: 'SAMPLE: Pacific Northwest Supply'
+              AddressLine1: 2334 Cedar Crest Blvd
+              AddressLine2: ''
+              City: Medford
+              State: OR
+              PostalCode: '97504'
+              Country: USA
+              Phone: "(541) 178-4197"
+              Fax: "(541) 271-2232"
+              Email: Pacific@gmail.com
+              Website: www.pacregsupply.com
+              AccountNumber: '911834035'
+              TimeZone: ''
+        '400':
+          description: BadRequest
+    post:
+      tags:
+      - Customers
+      summary: Update customer
+      description: This endpoint is used to post customer details based on their ID.
+      operationId: Customers_UpdateCustomer
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces: []
+      parameters:
+      - name: id
+        in: path
+        description: ID that serves as a unique identifier for a customer
+        required: true
+        type: integer
+        format: int32
+      - name: customerDto
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/OnTime.Core.Business.DTOs.CustomerDto"
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '400':
+          description: BadRequest
+    delete:
+      tags:
+      - Customers
+      summary: Delete customer
+      description: This is used to delete a customer from the system.
+      operationId: Customers_DeleteCustomer
+      consumes: []
+      produces: []
+      parameters:
+      - name: id
+        in: path
+        description: ID that serves as a unique identifier for a customer
+        required: true
+        type: integer
+        format: int32
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '400':
+          description: BadRequest
+  "/api/DownloadLabel":
+    get:
+      tags:
+      - OrderLabel
+      summary: Download label
+      description: This endpoint assists in downloading the shipping label.
+      operationId: OrderLabel_DownloadLabel
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: query
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      - name: type
+        in: query
+        description: Type of the label
+        required: true
+        type: string
+      - name: size
+        in: query
+        description: Size of the label
+        required: false
+        type: string
+      - name: customerId
+        in: query
+        description: It serves as a distinctive reference number to differentiate
+          and identify customers.
+        required: false
+        type: string
+      - name: format
+        in: query
+        description: Format of the label
+        required: false
+        type: string
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '400':
+          description: BadRequest
+  "/api/OrderLabel/{id}":
+    get:
+      tags:
+      - OrderLabel
+      summary: Get order label
+      description: This endpoint assists in downloading the order label.
+      operationId: OrderLabel_GetOrderLabel
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: id
+        in: path
+        description: ID that serves as a unique identifier for a order
+        required: true
+        type: string
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '400':
+          description: BadRequest
+ 
+  "/api/orders/vpoddownload":
+    get:
+      tags:
+      - Orders
+      summary: Get attachments
+      description: This endpoint supplies the URL for accessing attachments/images
+        for downloading.
+      operationId: Orders_GetAttachments
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: query
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      - name: ignoreOrderStatus
+        in: query
+        description: Indicates the order status. The potential values are "Yes/No,"
+          where "Yes" signifies that the , and "No" signifies that it is not required.
+        required: false
+        type: boolean
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              Message: ''
+              TotalAttachmentCount: 0
+              AttachementData:
+              - FileName: ''
+                Contents: ''
+        '400':
+          description: BadRequest
+  "/api/orderUpdates":
+    get:
+      tags:
+      - Orders
+      summary: Order updates
+      description: This endpoint facilitates the retrieval of order details that match
+        the specified date and time values entered in the search field.
+      operationId: Orders_GetOrderUpdates
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: minDateTime
+        in: query
+        description: orderUpdatesThis indicates the specific start date and time that
+          should be entered into the search field to generate the desired results.
+        required: true
+        type: string
+        format: date-time
+      - name: page
+        in: query
+        description: This represents the page number to be used for pagination.
+        required: false
+        type: integer
+        format: int32
+      - name: maxResults
+        in: query
+        description: The maximum number of records that can be displayed in a page
+        required: false
+        type: integer
+        format: int32
+      - name: maxDateTime
+        in: query
+        description: This indicates the specific end date and time that should be
+          entered into the search field to generate the desired results.
+        required: false
+        type: string
+        format: date-time
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              LastUpdateReturned: '2023-11-07T11:49:42.0707825Z'
+              OrderData:
+                RegionCode: AUS
+                error:
+                ID: ae6e3698 - 812a - 4c6d - 84c0 - fe5f8d303205
+                TrackingNumber: '10358950'
+                TrackingURL: https://sampleurl.com/MyOrder/?id=8i569mGbnUSlsErmjSOSNQ
+                BarcodeURL: https://sampleurl.net/OrdersManagement/Orders/OrderShippingLabel?orderId=ae6e3698-812a-4c6d-84c0-fe5f8d303205&customerId=57ecc72b-906e-4eb8-ae2a-62e53c9ec5e5
+                ShippingLabel: https://sampleurl.com/api/DownloadLabel?TrackingNumber=10358950&Type=ShippingLabel&CustomerId=57ecc72b-906e-4eb8-ae2a-62e53c9ec5e5
+                VpodDownload: https://sampleurl.com/api/orders/vpoddownload?trackingNumber=10358950
+                SignatureURL:
+                Refrigerated: false
+                StatusUpdates:
+                - Date: '2023-09-29T08:15:08.7733333'
+                  Description: Delivered
+                  Exception: false
+                  ExceptionCode: 0
+                  LocalTime: '2023-09-29T03:15:08.7733333'
+                  Region: Austin
+                - Date: '2023-09-29T08:14:42.0133333'
+                  Description: On vehicle for delivery
+                  Exception: false
+                  ExceptionCode: 0
+                  LocalTime: '2023-09-29T03:14:42.0133333'
+                  Region: Austin
+                - Date: '2023-09-29T08:14:23.7133333'
+                  Description: Arrived at AUSTIN sort facility
+                  Exception: false
+                  ExceptionCode: 0
+                  LocalTime: '2023-09-29T03:14:23.7133333'
+                  Region: Austin
+                - Date: '2023-09-29T08:13:59.52'
+                  Description: Outbound shuttle transfer
+                  Exception: false
+                  ExceptionCode: 0
+                  LocalTime: '2023-09-29T03:13:59.52'
+                  Region: Dallas
+                - Date: '2023-09-29T08:13:48.1'
+                  Description: Arrived at DALLAS sort facility
+                  Exception: false
+                  ExceptionCode: 0
+                  LocalTime: '2023-09-29T03:13:48.1'
+                  Region: Dallas
+                - Date: '2023-09-29T08:13:38.1'
+                  Description: Delivery date changed
+                  Exception: false
+                  ExceptionCode: 0
+                  LocalTime: '2023-09-29T03:13:38.1'
+                  Region: Dallas
+                - Date: '2023-09-29T08:13:34.9566667'
+                  Description: Picked up
+                  Exception: false
+                  ExceptionCode: 0
+                  LocalTime: '2023-09-29T03:13:34.9566667'
+                  Region: Dallas
+                - Date: '2023-09-29T08:13:05.9466667'
+                  Description: Order information received
+                  Exception: false
+                  ExceptionCode: 0
+                  LocalTime: '2023-09-29T03:13:05.9466667'
+                  Region: Dallas
+                DeliveryContactName: ''
+                StatusCode: 3
+                CustomerAccount: '911834035'
+                Description: Ordered From STG API
+                Comments:
+                Customer: 57ecc72b - 906e-4eb8 - ae2a - 62e53c9ec5e5
+                PriceSet: b6ec8de4 - 852a - 445f - 8f3e-c56b8b396111
+                CollectionArrivalWindow:
+                  EarliestTime: '2023-09-29T08:13:03.057'
+                  LatestTime: '2023-09-30T02:00:00'
+                DeliveryArrivalWindow:
+                  EarliestTime: '2023-09-29T10:00:00'
+                  LatestTime: '2023-09-29T18:00:00'
+                CollectionSignatureRequired: true
+                DeliverySignatureRequired: true
+                SuppressUserNotification: false
+                CollectionLocation:
+                  Zone:
+                  ID: 83f3fbcc-905f-4ffd-a96d-0abd836cee64
+                  ContactName: Demo Collection-11
+                  CompanyName: Collection Company-11
+                  AddressLine1: 2334 Cedar Crest Blvd
+                  AddressLine2: None
+                  City: Dallas
+                  State: TX
+                  PostalCode: '75203'
+                  Country: United States
+                  Comments:
+                  Email: pharma@yopmail.com
+                  Phone: '9517538640'
+                  Category:
+                  LatitudeLongitude: 32.7334,-96.79282
+                DeliveryLocation:
+                  Zone:
+                  ID: 8c7630b9-5a2c-4c1e-8eb5-88b864ca1a37
+                  ContactName: Texaco Austin schedule-10
+                  CompanyName: Texaco Austin schedule-10
+                  AddressLine1: 6018 Atwood St
+                  AddressLine2: "-"
+                  City: Austin
+                  State: TX
+                  PostalCode: '78741'
+                  Country: United States
+                  Comments: test
+                  Email: uzumaki@yopmail.com
+                  Phone: '75315945610'
+                  Category:
+                  LatitudeLongitude:
+                DeclaredValue: 10
+                TotalCost: 11
+                DriverInstruction:
+              CurrentPage: 1
+              Count: 50
+              TotalCount: 100
+              TotalPage: 2
+        '400':
+          description: BadRequest
+  "/api/GetNewOrderByCustomerId/{CustomerId}":
+    get:
+      tags:
+      - Orders
+      summary: Get orders details
+      description: This endpoint helps in obtaining new orders by using the customer
+        ID.
+      operationId: Orders_GetNewOrderByCustomerId
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: CustomerId
+        in: path
+        description: It serves as a distinctive reference number to differentiate
+          and identify customers.
+        required: true
+        type: integer
+        format: int32
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+            - Sequence: 1
+              TrackingNumber: '10356385'
+              SignatureRequired: true
+              DeliverAfter: '2023-11-06T11:49:42.0717834Z'
+              DeliverBefore: '2023-11-07T11:49:42.0717834Z'
+              Address:
+                CompanyName: Johnsons-6
+                ContactName: Johnsons-6
+                AddressLine1: 2334 Cedar Crest Blvd
+                AddressLine2: ''
+                City: Medford
+                State: OR
+                PostalCode: '97504'
+              Latitude: 0
+              Longitude: 0
+              PhoneNumber: "(541) 178-4197"
+              IsOptimized: true
+        '400':
+          description: BadRequest
+  "/api/orders/signature/{trackingNumber}/{format}":
+    get:
+      tags:
+      - Orders
+      summary: Get signature
+      description: This endpoint provides the base64-encoded signature received from
+        the recipient upon order delivery.
+      operationId: Orders_GetSignature
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      - image/png
+      - image/svg+xml
+      parameters:
+      - name: trackingNumber
+        in: path
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      - name: format
+        in: path
+        description: The format in which the signature should be downloaded.
+        required: true
+        type: string
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: BadRequest
+  "/api/orders":
+    post:
+      tags:
+      - Orders
+      summary: Create an Order
+      description: This API endpoint facilitates the creation of a customer's order
+        by capturing essential information such as quantities, prices, and location
+        details.
+      operationId: Orders_CreateOrder
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: orderDto
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/OnTime.Core.Business.DTOs.OrderInDto"
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              RegionCode: AUS
+              error:
+              ID: ae6e3698 - 812a - 4c6d - 84c0 - fe5f8d303205
+              TrackingNumber: '10358950'
+              TrackingURL: https://sampleurl.com/MyOrder/?id=8i569mGbnUSlsErmjSOSNQ
+              BarcodeURL: https://sampleurl.net/OrdersManagement/Orders/OrderShippingLabel?orderId=ae6e3698-812a-4c6d-84c0-fe5f8d303205&customerId=57ecc72b-906e-4eb8-ae2a-62e53c9ec5e5
+              ShippingLabel: https://sampleurl.com/api/DownloadLabel?TrackingNumber=10358950&Type=ShippingLabel&CustomerId=57ecc72b-906e-4eb8-ae2a-62e53c9ec5e5
+              VpodDownload: https://sampleurl.com/api/orders/vpoddownload?trackingNumber=10358950
+              SignatureURL:
+              Refrigerated: false
+              StatusUpdates:
+              - Date: '2023-09-29T08:15:08.7733333'
+                Description: Delivered
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:15:08.7733333'
+                Region: Austin
+              - Date: '2023-09-29T08:14:42.0133333'
+                Description: On vehicle for delivery
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:14:42.0133333'
+                Region: Austin
+              - Date: '2023-09-29T08:14:23.7133333'
+                Description: Arrived at AUSTIN sort facility
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:14:23.7133333'
+                Region: Austin
+              - Date: '2023-09-29T08:13:59.52'
+                Description: Outbound shuttle transfer
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:59.52'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:48.1'
+                Description: Arrived at DALLAS sort facility
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:48.1'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:38.1'
+                Description: Delivery date changed
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:38.1'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:34.9566667'
+                Description: Picked up
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:34.9566667'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:05.9466667'
+                Description: Order information received
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:05.9466667'
+                Region: Dallas
+              DeliveryContactName: ''
+              StatusCode: 3
+              CustomerAccount: '911834035'
+              Description: Ordered From STG API
+              Comments:
+              Customer: 57ecc72b - 906e-4eb8 - ae2a - 62e53c9ec5e5
+              PriceSet: b6ec8de4 - 852a - 445f - 8f3e-c56b8b396111
+              CollectionArrivalWindow:
+                EarliestTime: '2023-09-29T08:13:03.057'
+                LatestTime: '2023-09-30T02:00:00'
+              DeliveryArrivalWindow:
+                EarliestTime: '2023-09-29T10:00:00'
+                LatestTime: '2023-09-29T18:00:00'
+              CollectionSignatureRequired: true
+              DeliverySignatureRequired: true
+              SuppressUserNotification: false
+              CollectionLocation:
+                Zone:
+                ID: 83f3fbcc-905f-4ffd-a96d-0abd836cee64
+                ContactName: Demo Collection-11
+                CompanyName: Collection Company-11
+                AddressLine1: 2334 Cedar Crest Blvd
+                AddressLine2: None
+                City: Dallas
+                State: TX
+                PostalCode: '75203'
+                Country: United States
+                Comments:
+                Email: pharma@yopmail.com
+                Phone: '9517538640'
+                Category:
+                LatitudeLongitude: 32.7334,-96.79282
+              DeliveryLocation:
+                Zone:
+                ID: 8c7630b9-5a2c-4c1e-8eb5-88b864ca1a37
+                ContactName: Texaco Austin schedule-10
+                CompanyName: Texaco Austin schedule-10
+                AddressLine1: 6018 Atwood St
+                AddressLine2: "-"
+                City: Austin
+                State: TX
+                PostalCode: '78741'
+                Country: United States
+                Comments: test
+                Email: uzumaki@yopmail.com
+                Phone: '75315945610'
+                Category:
+                LatitudeLongitude:
+              DeclaredValue: 10
+              TotalCost: 11
+              DriverInstruction:
+        '400':
+          description: BadRequest
+  "/api/orders/cancel/{trackingNumber}":
+    post:
+      tags:
+      - Orders
+      summary: Cancel order
+      description: This endpoint is designed to streamline the order cancellation
+        process. To cancel an order, it is required to provide the order's tracking
+        number.
+      operationId: Orders_CancelOrder
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: path
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: BadRequest
+  "/api/orders/syncLateOrders":
+    get:
+      tags:
+      - Orders
+      summary: Sync late orders
+      description: This endpoint is used to synchronize late orders.
+      operationId: Orders_SyncLateOrders
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: BadRequest
+  "/api/orders/lateOrders":
+    get:
+      tags:
+      - Orders
+      summary: Get late orders
+      description: This endpoint retrieves the list of late orders
+      operationId: Orders_GetLateOrders
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              LateOrders:
+              - TrackingNumber: ''
+                DateSubmitted: ''
+                RecipientName: ''
+                RecipientPhone: ''
+                Description: ''
+              CustomerName: ''
+              CustomerEmail: ''
+        '400':
+          description: BadRequest
+  "/api/GetLatandLongFromOntime":
+    post:
+      tags:
+      - Orders
+      summary: Get latitude and longitude
+      description: Searches for latitude and longitude from Ontime that match a supplied
+        tracking number.
+      operationId: Orders_GetLatandLongFromOntime
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: query
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              LatitudeLongitude: ''
+        '400':
+          description: BadRequest
+  "/api/orders/ValidateZipcode":
+    post:
+      tags:
+      - Orders
+      summary: Validate zip code
+      description: This endpoint assists in validating the delivery zip code using
+        the customer's ID.
+      operationId: Orders_ValidateZipcode
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: FromPostalCode
+        in: query
+        description: Postal code of collection address location
+        required: true
+        type: string
+      - name: ToPostalCode
+        in: query
+        description: Postal code of delivery address location
+        required: true
+        type: string
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: BadRequest
+  "/api/orders/tracking":
+    get:
+      tags:
+      - Orders
+      summary: Get orders public
+      description: To retrieve the order status, utilizing the tracking number and
+        the customer's API key.
+      operationId: Orders_GetOrdersPublic
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: query
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      - name: key
+        in: query
+        description: The API key linked to a customer for their identification.
+        required: true
+        type: string
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              RegionCode: AUS
+              error:
+              ID: ae6e3698 - 812a - 4c6d - 84c0 - fe5f8d303205
+              TrackingNumber: '10358950'
+              TrackingURL: https://sampleurl.com/MyOrder/?id=8i569mGbnUSlsErmjSOSNQ
+              BarcodeURL: https://sampleurl.net/OrdersManagement/Orders/OrderShippingLabel?orderId=ae6e3698-812a-4c6d-84c0-fe5f8d303205&customerId=57ecc72b-906e-4eb8-ae2a-62e53c9ec5e5
+              ShippingLabel: https://sampleurl.com/api/DownloadLabel?TrackingNumber=10358950&Type=ShippingLabel&CustomerId=57ecc72b-906e-4eb8-ae2a-62e53c9ec5e5
+              VpodDownload: https://sampleurl.com/api/orders/vpoddownload?trackingNumber=10358950
+              SignatureURL:
+              Refrigerated: false
+              StatusUpdates:
+              - Date: '2023-09-29T08:15:08.7733333'
+                Description: Delivered
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:15:08.7733333'
+                Region: Austin
+              - Date: '2023-09-29T08:14:42.0133333'
+                Description: On vehicle for delivery
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:14:42.0133333'
+                Region: Austin
+              - Date: '2023-09-29T08:14:23.7133333'
+                Description: Arrived at AUSTIN sort facility
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:14:23.7133333'
+                Region: Austin
+              - Date: '2023-09-29T08:13:59.52'
+                Description: Outbound shuttle transfer
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:59.52'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:48.1'
+                Description: Arrived at DALLAS sort facility
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:48.1'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:38.1'
+                Description: Delivery date changed
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:38.1'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:34.9566667'
+                Description: Picked up
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:34.9566667'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:05.9466667'
+                Description: Order information received
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:05.9466667'
+                Region: Dallas
+              DeliveryContactName: ''
+              StatusCode: 3
+              CustomerAccount: '911834035'
+              Description: Ordered From STG API
+              Comments:
+              Customer: 57ecc72b - 906e-4eb8 - ae2a - 62e53c9ec5e5
+              PriceSet: b6ec8de4 - 852a - 445f - 8f3e-c56b8b396111
+              CollectionArrivalWindow:
+                EarliestTime: '2023-09-29T08:13:03.057'
+                LatestTime: '2023-09-30T02:00:00'
+              DeliveryArrivalWindow:
+                EarliestTime: '2023-09-29T10:00:00'
+                LatestTime: '2023-09-29T18:00:00'
+              CollectionSignatureRequired: true
+              DeliverySignatureRequired: true
+              SuppressUserNotification: false
+              CollectionLocation:
+                Zone:
+                ID: 83f3fbcc-905f-4ffd-a96d-0abd836cee64
+                ContactName: Demo Collection-11
+                CompanyName: Collection Company-11
+                AddressLine1: 2334 Cedar Crest Blvd
+                AddressLine2: None
+                City: Dallas
+                State: TX
+                PostalCode: '75203'
+                Country: United States
+                Comments:
+                Email: pharma@yopmail.com
+                Phone: '9517538640'
+                Category:
+                LatitudeLongitude: 32.7334,-96.79282
+              DeliveryLocation:
+                Zone:
+                ID: 8c7630b9-5a2c-4c1e-8eb5-88b864ca1a37
+                ContactName: Texaco Austin schedule-10
+                CompanyName: Texaco Austin schedule-10
+                AddressLine1: 6018 Atwood St
+                AddressLine2: "-"
+                City: Austin
+                State: TX
+                PostalCode: '78741'
+                Country: United States
+                Comments: test
+                Email: uzumaki@yopmail.com
+                Phone: '75315945610'
+                Category:
+                LatitudeLongitude:
+              DeclaredValue: 10
+              TotalCost: 11
+              DriverInstruction:
+        '400':
+          description: BadRequest
+  "/api/Orders":
+    get:
+      tags:
+      - Orders
+      summary: Get orders
+      description: This endpoint facilitates the retrieval of a list of orders.
+      operationId: Orders_GetOrders
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              TrackingNumber: ''
+        '400':
+          description: BadRequest
+  "/api/Orders/{id}":
+    get:
+      tags:
+      - Orders
+      summary: Order tracking
+      description: This endpoint assists in obtaining order details by using the tracking
+        number.
+      operationId: Orders_GetOrders
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: id
+        in: path
+        description: The tracking number acts as a unique identifier to track the
+          package in real time during the shipment.
+        required: true
+        type: string
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              RegionCode: AUS
+              error:
+              ID: ae6e3698 - 812a - 4c6d - 84c0 - fe5f8d303205
+              TrackingNumber: '10358950'
+              TrackingURL: https://sampleurl.com/MyOrder/?id=8i569mGbnUSlsErmjSOSNQ
+              BarcodeURL: https://sampleurl.net/OrdersManagement/Orders/OrderShippingLabel?orderId=ae6e3698-812a-4c6d-84c0-fe5f8d303205&customerId=57ecc72b-906e-4eb8-ae2a-62e53c9ec5e5
+              ShippingLabel: https://sampleurl.com/api/DownloadLabel?TrackingNumber=10358950&Type=ShippingLabel&CustomerId=57ecc72b-906e-4eb8-ae2a-62e53c9ec5e5
+              VpodDownload: https://sampleurl.com/api/orders/vpoddownload?trackingNumber=10358950
+              SignatureURL:
+              Refrigerated: false
+              StatusUpdates:
+              - Date: '2023-09-29T08:15:08.7733333'
+                Description: Delivered
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:15:08.7733333'
+                Region: Austin
+              - Date: '2023-09-29T08:14:42.0133333'
+                Description: On vehicle for delivery
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:14:42.0133333'
+                Region: Austin
+              - Date: '2023-09-29T08:14:23.7133333'
+                Description: Arrived at AUSTIN sort facility
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:14:23.7133333'
+                Region: Austin
+              - Date: '2023-09-29T08:13:59.52'
+                Description: Outbound shuttle transfer
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:59.52'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:48.1'
+                Description: Arrived at DALLAS sort facility
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:48.1'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:38.1'
+                Description: Delivery date changed
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:38.1'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:34.9566667'
+                Description: Picked up
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:34.9566667'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:05.9466667'
+                Description: Order information received
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:05.9466667'
+                Region: Dallas
+              DeliveryContactName: ''
+              StatusCode: 3
+              CustomerAccount: '911834035'
+              Description: Ordered From STG API
+              Comments:
+              Customer: 57ecc72b - 906e-4eb8 - ae2a - 62e53c9ec5e5
+              PriceSet: b6ec8de4 - 852a - 445f - 8f3e-c56b8b396111
+              CollectionArrivalWindow:
+                EarliestTime: '2023-09-29T08:13:03.057'
+                LatestTime: '2023-09-30T02:00:00'
+              DeliveryArrivalWindow:
+                EarliestTime: '2023-09-29T10:00:00'
+                LatestTime: '2023-09-29T18:00:00'
+              CollectionSignatureRequired: true
+              DeliverySignatureRequired: true
+              SuppressUserNotification: false
+              CollectionLocation:
+                Zone:
+                ID: 83f3fbcc-905f-4ffd-a96d-0abd836cee64
+                ContactName: Demo Collection-11
+                CompanyName: Collection Company-11
+                AddressLine1: 2334 Cedar Crest Blvd
+                AddressLine2: None
+                City: Dallas
+                State: TX
+                PostalCode: '75203'
+                Country: United States
+                Comments:
+                Email: pharma@yopmail.com
+                Phone: '9517538640'
+                Category:
+                LatitudeLongitude: 32.7334,-96.79282
+              DeliveryLocation:
+                Zone:
+                ID: 8c7630b9-5a2c-4c1e-8eb5-88b864ca1a37
+                ContactName: Texaco Austin schedule-10
+                CompanyName: Texaco Austin schedule-10
+                AddressLine1: 6018 Atwood St
+                AddressLine2: "-"
+                City: Austin
+                State: TX
+                PostalCode: '78741'
+                Country: United States
+                Comments: test
+                Email: uzumaki@yopmail.com
+                Phone: '75315945610'
+                Category:
+                LatitudeLongitude:
+              DeclaredValue: 10
+              TotalCost: 11
+              DriverInstruction:
+        '400':
+          description: BadRequest
+  "/api/pricesets/{source}/{dest}":
+    get:
+      tags:
+      - PriceSets
+      summary: Get the priceset
+      description: This endpoint is designed to obtain the price sets for a selected
+        customer, which include pricing estimates.
+      operationId: PriceSets_GetPricesets
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: source
+        in: path
+        description: Source name
+        required: true
+        type: string
+      - name: dest
+        in: path
+        description: Destination name
+        required: true
+        type: string
+      - name: declaredValue
+        in: query
+        description: The amount value declared for the order
+        required: false
+        type: string
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              PriceEstimate: ''
+        '400':
+          description: BadRequest
+  "/api/PriceSets":
+    get:
+      tags:
+      - PriceSets
+      summary: Get a list of priceset
+      description: To retrieve the Price Sets using the selected customer's API key.
+      operationId: PriceSets_GetPricesets
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              ID: ''
+              Name: ''
+              ServiceLevel: ''
+        '400':
+          description: BadRequest
+    
+  "/api/PriceSets/{id}":
+    post:
+      tags:
+      - PriceSets
+      summary: Update priceset
+      description: This is used for posting/updating a price set in the system using
+        its ID.
+      operationId: PriceSets_UpdatePriceSet
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces: []
+      parameters:
+      - name: id
+        in: path
+        description: The unique ID generated by the STAT system for the price sets
+        required: true
+        type: integer
+        format: int32
+      - name: pricesetDto
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/OnTime.Core.Business.DTOs.PriceSetDto"
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: BadRequest
+    delete:
+      tags:
+      - PriceSets
+      summary: Delete priceset
+      description: This is used to delete a price set from the system.
+      operationId: PriceSets_DeletePriceSet
+      consumes: []
+      produces: []
+      parameters:
+      - name: id
+        in: path
+        description: The unique ID generated by the STAT system for the price sets
+        required: true
+        type: integer
+        format: int32
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '400':
+          description: BadRequest
+  "/api/serviceAreasByRegion":
+    get:
+      tags:
+      - ServiceAreas
+      summary: Get service areas by region
+      description: This is to obtain the serviceable areas by region to deliver the
+        order
+      operationId: ServiceAreas_GetServiceAreasByRegion
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              RegionId: 00000000-0000-0000-0000-000000000000
+              RegionName: ''
+              ZipCodes: []
+        '400':
+          description: BadRequest
+  "/api/ServiceAreas":
+    get:
+      tags:
+      - ServiceAreas
+      summary: Get a list of service areas
+      description: This endpoint helps retrieve the list of delivery service areas.
+      operationId: ServiceAreas_GetServiceAreas
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            application/json:
+              ZipValue: ''
+        '400':
+          description: BadRequest
+    
+  "/api/ServiceAreas/{id}":
+    get:
+      tags:
+      - ServiceAreas
+      summary: Get service areas details
+      description: This is to obtain the serviceable areas by ID to deliver the order
+      operationId: ServiceAreas_GetServiceAreas
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: id
+        in: path
+        description: The unique ID generated by the STAT system to identify the service
+          areas
+        required: true
+        type: string
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: BadRequest
+definitions:
+  OnTime.Core.Business.DTOs.CustomerDto:
+    required:
+    - DisplayName
+    type: object
+    properties:
+      CustomerId:
+        format: int32
+        description: It serves as a distinctive reference number to differentiate
+          and identify customers.
+        type: integer
+      DisplayName:
+        description: Display name of the customer
+        maxLength: 255
+        minLength: 0
+        type: string
+      PriceSets:
+        description: ''
+        type: array
+        items:
+          type: string
+      ID:
+        description: It serves as a distinctive reference number to differentiate
+          and identify customers
+        maxLength: 50
+        minLength: 0
+        type: string
+      Name:
+        description: Name of the customer
+        maxLength: 50
+        minLength: 0
+        type: string
+      PrimaryContactName:
+        description: Name of the primary customer
+        maxLength: 50
+        minLength: 0
+        type: string
+      AddressLine1:
+        description: Line 1 of the delivery location address.
+        maxLength: 50
+        minLength: 0
+        type: string
+      AddressLine2:
+        description: Line 2 of the delivery location address.
+        maxLength: 50
+        minLength: 0
+        type: string
+      City:
+        description: City of the delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      State:
+        description: State of the delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      PostalCode:
+        description: Postal code of the delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      Country:
+        description: Country of the delivery collection location
+        maxLength: 50
+        minLength: 0
+        type: string
+      Phone:
+        description: Phone number of the customer
+        maxLength: 50
+        minLength: 0
+        type: string
+      Fax:
+        description: Fax number of the customer
+        maxLength: 50
+        minLength: 0
+        type: string
+      Email:
+        description: Email address of the customer
+        maxLength: 50
+        minLength: 0
+        type: string
+      Website:
+        description: Website details of the customer
+        maxLength: 50
+        minLength: 0
+        type: string
+      AccountNumber:
+        description: Account number of the customer
+        maxLength: 50
+        minLength: 0
+        type: string
+      TimeZone:
+        description: Timezone of the customer
+        maxLength: 50
+        minLength: 0
+        type: string
+    example:
+      CustomerId: 1369
+      DisplayName: 'SAMPLE: Pacific Northwest Supply'
+      ID: ''
+      Name: 'SAMPLE: Pacific Northwest Supply'
+      PrimaryContactName: 'SAMPLE: Pacific Northwest Supply'
+      AddressLine1: 2334 Cedar Crest Blvd
+      AddressLine2: ''
+      City: Medford
+      State: OR
+      PostalCode: '97504'
+      Country: USA
+      Phone: "(541) 178-4197"
+      Fax: "(541) 271-2232"
+      Email: Pacific@gmail.com
+      Website: www.pacregsupply.com
+      AccountNumber: '911834035'
+      TimeZone: ''
+  System.Data.Entity.Validation.DbValidationError:
+    type: object
+    properties:
+      _propertyName:
+        type: string
+      _errorMessage:
+        type: string
+  OnTime.Core.Business.DTOs.OrderInDto:
+    type: object
+    properties:
+      CODAmount:
+        format: double
+        description: The amount to be collected at the time of delivery
+        type: number
+      DeliveryCODRequired:
+        description: 'To determine if DeliveryCOD is necessary or not. The options
+          are "Yes/No". Example: When "Yes" is selected, Delivery COD is mandatory,
+          while "No" indicates it is not required.'
+        type: boolean
+      Refrigerated:
+        description: This indicates whether the product is refrigerated prior to or
+          during shipment. The potential values are "Yes/No," where "Yes" signifies
+          that the product is refrigerated, and "No" signifies that it is not refrigerated.
+        type: boolean
+      TrackingNumber:
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        maxLength: 50
+        minLength: 0
+        type: string
+      RequestedBy:
+        description: The individual who requested the order
+        maxLength: 50
+        minLength: 0
+        type: string
+      Description:
+        description: This is a free text field where the special instructions about
+          the product, shipment are added
+        maxLength: 2000
+        minLength: 0
+        type: string
+      Comments:
+        description: This is a free text field where the special instructions about
+          the product, shipment are added
+        maxLength: 2000
+        minLength: 0
+        type: string
+      CollectionContactName:
+        description: Name of the person from whom the package should be collected
+        maxLength: 50
+        minLength: 0
+        type: string
+      CollectionCODRequired:
+        description: This indicates whether collection COD is required. The potential
+          values are "Yes/No," where "Yes" signifies that the COD is required, and
+          "No" signifies that it is not required.
+        type: boolean
+      CollectionSignatureRequired:
+        description: This indicates whether obtaining a signature from the recipient
+          is necessary after package collection. The potential values are "Yes/No,"
+          where "Yes" signifies that the signature is required, and "No" signifies
+          that it is not required.
+        type: boolean
+      Distance:
+        format: double
+        description: Distance estimated for the delivery
+        type: number
+      Height:
+        format: double
+        description: Height of the package
+        type: number
+      Width:
+        format: double
+        description: Width of the package
+        type: number
+      Length:
+        format: double
+        description: Length of the package
+        type: number
+      Weight:
+        format: double
+        description: Weight of the package
+        type: number
+      Quantity:
+        format: int32
+        description: Order quantity
+        type: integer
+      PriceSet:
+        description: Priceset of the package
+        maxLength: 50
+        minLength: 0
+        type: string
+      DeclaredValue:
+        format: double
+        description: The amount value declared for the order
+        type: number
+      DeliverySignatureRequired:
+        description: Indicates whether a signature is necessary from the recipient
+          upon package delivery. The potential values are "Yes/No," where "Yes" signifies
+          that the signature is required, and "No" signifies that it is not required.
+        type: boolean
+      SuppressUserNotification:
+        description: This allows to prevent or disable notifications intended for
+          a user. The potential values are "Yes/No," where "Yes" signifies that the
+          notifications should not be sent, and "No" signifies that notification has
+          to to be sent.
+        type: boolean
+      PurchaseOrderNumber:
+        description: PurchaseOrderNumber serves as a unique identifier to track the
+          purchase order.
+        maxLength: 50
+        minLength: 0
+        type: string
+      ReferenceNumber:
+        description: ReferenceNumber serves as a unique identifier to track the package
+          order.
+        maxLength: 50
+        minLength: 0
+        type: string
+      ShortCodeOptIn:
+        description: It signifies whether a shortcodeoptin is required or not. The
+          potential values are "Yes/No," where "Yes" signifies that the shortcodeoptin
+          is required, and "No" signifies that it is not required.
+        type: boolean
+      CollectionLocation:
+        "$ref": "#/definitions/OnTime.Core.Business.DTOs.Collectionlocation"
+        description: ''
+      DeliveryLocation:
+        "$ref": "#/definitions/OnTime.Core.Business.DTOs.Deliverylocation"
+        description: ''
+      ShipToInjectionPoint:
+        description: It signifies whether a shipment to the injection point is required
+          or not. The potential values are "Yes/No," where "Yes" signifies that the
+          shipment is required, and "No" signifies that it is not required.
+        type: boolean
+      ShippinglabelSize:
+        description: Represents the size of the shipping label
+        maxLength: 50
+        minLength: 0
+        type: string
+      RXNumber:
+        description: Represents the size of the shipping label
+        maxLength: 250
+        minLength: 0
+        type: string
+      SignatureType:
+        description: This denotes whether the signature should be received from the
+          desired contact. The possible values are “Direct/Indirect” where “Direct”
+          signifies that the signature needs to be received from the desired person
+          and “Indirect” signifies that it is not needed to be collected from the
+          desired person
+        maxLength: 50
+        minLength: 0
+        type: string
+      IsAdultSignature:
+        description: Denotes the signature is received from an adult. The possible
+          values are “Yes/No” where “Yes” signifies that the signature was received
+          from an adult person and “No” signifies that it is not an adult signature
+        type: boolean
+      DriverInstruction:
+        description: A text field that allows for the inclusion of instructions to
+          provide to drivers.
+        maxLength: 200
+        minLength: 0
+        type: string
+    example:
+      CODAmount: 20
+      DeliveryCODRequired: false
+      Refrigerated: false
+      TrackingNumber: ''
+      Description: 'Fragile Handle with care: Glass material'
+      Comments: Inflammable
+      CollectionCODRequired: false
+      CollectionSignatureRequired: false
+      Distance: 0
+      Height: 150
+      Width: 200
+      Length: 250
+      Weight: 200
+      Quantity: 1
+      PriceSet: b6ec8de4-852a-445f-8f3e-c56b8b396111
+      DeclaredValue: 129
+      DeliverySignatureRequired: true
+      SuppressUserNotification: false
+      PurchaseOrderNumber: '55555'
+      ShortCodeOptIn: false
+      CollectionLocation:
+        ID: 83f3fbcc-905f-4ffd-a96d-0abd836cee64
+        ContactName: Demo Collection-11
+        CompanyName: Collection Company-11
+        AddressLine1: 2334 Cedar Crest Blvd
+        AddressLine2: None
+        City: Dallas
+        State: TX
+        PostalCode: '75203'
+        Country: United States
+        Email: pharma@yopmail.com
+        Phone: '9517538640'
+        LatitudeLongitude: 32.7334,-96.79282
+      DeliveryLocation:
+        ID: 8c7630b9-5a2c-4c1e-8eb5-88b864ca1a37
+        ContactName: Texaco Austin schedule-10
+        CompanyName: Texaco Austin schedule-10
+        AddressLine1: 6018 Atwood St
+        AddressLine2: "-"
+        City: Austin
+        State: TX
+        PostalCode: '78741'
+        Country: United States
+        Comments: test
+        Email: uzumaki@yopmail.com
+        Phone: '75315945610'
+      ShipToInjectionPoint: true
+      ShippinglabelSize: 4x8
+      RXNumber: ''
+      SignatureType: direct
+      IsAdultSignature: true
+      DriverInstruction: ''
+  OnTime.Core.Business.DTOs.Collectionlocation:
+    type: object
+    properties:
+      Zone:
+        description: Denotes the location zone
+        maxLength: 50
+        minLength: 0
+        type: string
+      ID:
+        description: The ID generated by the system serves as a unique identifier
+        maxLength: 50
+        minLength: 0
+        type: string
+      ContactName:
+        description: Name of the contact person of collection
+        maxLength: 50
+        minLength: 0
+        type: string
+      CompanyName:
+        description: Name of the company of the collection location
+        maxLength: 50
+        minLength: 0
+        type: string
+      AddressLine1:
+        description: Line 1 of the collection location address.
+        maxLength: 50
+        minLength: 0
+        type: string
+      AddressLine2:
+        description: Line 2 of the collection location address.
+        maxLength: 50
+        minLength: 0
+        type: string
+      City:
+        description: City of the collection location
+        maxLength: 50
+        minLength: 0
+        type: string
+      State:
+        description: State of the collection location
+        maxLength: 50
+        minLength: 0
+        type: string
+      PostalCode:
+        description: Postal code of the collection and delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      Country:
+        description: Country of the collection location
+        maxLength: 50
+        minLength: 0
+        type: string
+      Comments:
+        description: City of the collection location
+        maxLength: 50
+        minLength: 0
+        type: string
+      Email:
+        description: Email address of the contact person
+        maxLength: 512
+        minLength: 0
+        type: string
+      Phone:
+        description: Phone number of the contact person in collection
+        maxLength: 50
+        minLength: 0
+        type: string
+      Category:
+        description: This is used to specify a category
+        maxLength: 256
+        minLength: 0
+        type: string
+      LatitudeLongitude:
+        description: Lat and Long coordinates to collect the package
+        maxLength: 100
+        minLength: 0
+        type: string
+  OnTime.Core.Business.DTOs.Deliverylocation:
+    type: object
+    properties:
+      Zone:
+        description: Denotes the location zone
+        maxLength: 50
+        minLength: 0
+        type: string
+      ID:
+        description: The ID generated by the system serves as a unique identifier
+        maxLength: 50
+        minLength: 0
+        type: string
+      ContactName:
+        description: Name of the contact person of delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      CompanyName:
+        description: Name of the company of the delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      AddressLine1:
+        description: Line 1 of the delivery location address.
+        maxLength: 50
+        minLength: 0
+        type: string
+      AddressLine2:
+        description: Line 2 of the delivery location address.
+        maxLength: 50
+        minLength: 0
+        type: string
+      City:
+        description: City of the delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      State:
+        description: State of the delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      PostalCode:
+        description: Postal code of the delivery and delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      Country:
+        description: Country of the delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      Comments:
+        description: City of the delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      Email:
+        description: Email address of the contact person
+        maxLength: 512
+        minLength: 0
+        type: string
+      Phone:
+        description: Phone number of the contact person in delivery
+        maxLength: 50
+        minLength: 0
+        type: string
+      Category:
+        description: This is used to specify a category
+        maxLength: 256
+        minLength: 0
+        type: string
+      LatitudeLongitude:
+        description: Lat and Long coordinates to deliver the package
+        maxLength: 100
+        minLength: 0
+        type: string
+  OnTime.Core.Business.DTOs.PriceSetDto:
+    type: object
+    properties:
+      OrderId:
+        format: int64
+        description: The ID generated by the STAT system acts as a unique identifier
+          for an order
+        type: integer
+      UID:
+        description: The ID generated by the STAT system acts as a unique identifier
+          for an order
+        maxLength: 50
+        minLength: 0
+        type: string
+      CustomerId:
+        format: int32
+        description: It serves as a distinctive reference number to differentiate
+          and identify customers.
+        type: integer
+      BarcodeURL:
+        description: The BarcodeURL helps to check the status of the ordered product.
+        maxLength: 2000
+        minLength: 0
+        type: string
+    example:
+      OrderId: 0
+      UID: ''
+      CustomerId: 0
+      BarcodeURL: ''
+

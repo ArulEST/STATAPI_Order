@@ -1,0 +1,773 @@
+---
+swagger: '2.0'
+info:
+  version: v2
+  title: STATAPI Private
+  x-logo:
+    url: "../STATAPI_V2/logo.png"
+    altText: Ameriship logo
+host: https://statapi-testing.azurewebsites.net
+schemes:
+- http
+- https
+tags:
+  - name: Orders
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Orders module is designed to streamline the management of orders within the application. It provides a comprehensive set of endpoints and functionalities that allow users to retrieve orders. This module serves as the backbone for order processing, ensuring a seamless and efficient experience for the customers and administrators.
+
+      Key features of the Orders module include: 
+
+
+        •	**Order Creation:** Users can submit new orders through dedicated endpoints, specifying essential details such as collection and delivery location, quantities and price and tracking information. 
+      
+      
+        •	**Order Retrieval:** Retrieve detailed information about existing orders, including order tracking number, status, collection and delivery location, and customer details. 
+      
+      
+        •	**Order Status Tracking:** Easily monitor the status of orders, from creation to shipment and delivery, enabling real-time order tracking for customers and staff. 
+  - name: Customers
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Customers API facilitates interaction with and management of customer data. It offers a standardized method for creating, updating, and deleting customer records, as well as accessing and retrieving customer-related information, including profiles and order history, among other relevant data. This API is employed in improving the overall customer experience and enabling the provision of personalized services. 
+  - name: ServiceAreas
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Service Areas API enables users to access and oversee data associated with designated service areas. It aids in determining service coverage by examining a customer's zipcode and region, identifying areas within the service proximity for efficient order delivery. 
+  - name: PriceSets
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A Price Set API provides a method for calculating and retrieving the price or cost associated with a specific order.  
+
+x-tagGroups:
+  - name: General
+    tags:
+      - Orders   
+      - OrderLabel  
+      - Customers  
+      - PriceSets  
+      - ServiceAreas  
+
+paths:
+  "/api/orders/getImages/{trackingNumber}/{ImageId}":
+    get:
+      tags:
+      - Orders
+      summary: Get image
+      description: This endpoint retrieves the base64-encoded images of the customer.
+      operationId: Orders_GetImagesByCustomerId
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: path
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      - name: ImageId
+        in: path
+        description: Unique ID of the image
+        required: true
+        type: integer
+        format: int32
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/orders/getsignature/{trackingNumber}/{format}":
+    get:
+      tags:
+      - Orders
+      summary: Get signature
+      description: This endpoint provides the base64-encoded signature received from
+        the customer upon order delivery.
+      operationId: Orders_GetSignatureByCustomerId
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: path
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      - name: format
+        in: path
+        description: The format in which the signature should be downloaded.
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/CreateorderfromPortal":
+    post:
+      tags:
+      - Orders
+      summary: Create order from management portal
+      description: This sends the orderDto object to the database, saving an order
+        from the management portal into the database.
+      operationId: Orders_CreateOrderFromManagementPortal
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: orderDto
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/OrderInDto"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/Createorder":
+    post:
+      tags:
+      - Orders
+      summary: Create order from portal
+      description: To create an order from the customer portal
+      operationId: Orders_CreateOrderFromCustomerPortal
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: orderDto
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/OrderInDto"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/UploadSignature":
+    post:
+      tags:
+      - Orders
+      summary: Upload signature
+      description: This is for uploading the customer's signature into the database.
+      operationId: Orders_UploadSignature
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: query
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/UpdateOrderStatus":
+    post:
+      tags:
+      - Orders
+      summary: Update order status
+      description: This endpoint posts the otOrder object in the database and also
+        updates the order status in the database.
+      operationId: Orders_UpdateOrderStatus
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: query
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/UpdateStatus":
+    post:
+      tags:
+      - Orders
+      operationId: Orders_UpdateOrderStatus
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: otOrder
+        in: body
+        required: true
+        schema:
+          "$ref": "#/definitions/CustomOtOrder"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/Orders/SendStatusLinkText":
+    post:
+      tags:
+      - Orders
+      summary: Send status link text
+      description: This stores the order status link in the database.
+      operationId: Orders_SendStatusLinkText
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: query
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/updateaddress":
+    post:
+      tags:
+      - Orders
+      operationId: Orders_UpdateAddress
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: query
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/updatepriceset":
+    post:
+      tags:
+      - Orders
+      operationId: Orders_UpdatePriceSet
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: query
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/updatedeliverywindow":
+    post:
+      tags:
+      - Orders
+      operationId: Orders_UpdateDeliveryDateTime
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: query
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/updatepricemodifier":
+    post:
+      tags:
+      - Orders
+      operationId: Orders_UpdatePriceModifier
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: query
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/MoveSvgSignatureBlob":
+    post:
+      tags:
+      - Orders
+      operationId: Orders_MoveSvgSignatureBlob
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: SignatureId
+        in: query
+        required: true
+        type: integer
+        format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/ValidateAddress":
+    post:
+      tags:
+      - Orders
+      operationId: Orders_ValidateAddress
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: dropOff
+        in: body
+        required: true
+        schema:
+          "$ref": "#/definitions/Deliverylocation"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/orders/ZendeskNotificaion":
+    post:
+      tags:
+      - Orders
+      operationId: Orders_ZendeskNotificaion
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: query
+        required: true
+        type: string
+      - name: pickupDate
+        in: query
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/orders/SyncImages":
+    post:
+      tags:
+      - Orders
+      operationId: Orders_SyncImages
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: query
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/Orders":
+    post:
+      tags:
+      - Orders
+      operationId: Orders_SetCustomerbyId
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: CustomerId
+        in: query
+        required: true
+        type: integer
+        format: int32
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: boolean
+definitions:
+  OrderInDto:
+    type: object
+    properties:
+      CODAmount:
+        format: double
+        description: The amount to be collected at the time of delivery
+        type: number
+      DeliveryCODRequired:
+        description: 'To determine if DeliveryCOD is necessary or not. The options
+          are "Yes/No". Example: When "Yes" is selected, Delivery COD is mandatory,
+          while "No" indicates it is not required.'
+        type: boolean
+      Refrigerated:
+        description: This indicates whether the product is refrigerated prior to or
+          during shipment. The potential values are "Yes/No," where "Yes" signifies
+          that the product is refrigerated, and "No" signifies that it is not refrigerated.
+        type: boolean
+      TrackingNumber:
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        maxLength: 50
+        minLength: 0
+        type: string
+      RequestedBy:
+        description: The individual who requested the order
+        maxLength: 50
+        minLength: 0
+        type: string
+      Description:
+        description: This is a free text field where the special instructions about
+          the product, shipment are added
+        maxLength: 2000
+        minLength: 0
+        type: string
+      Comments:
+        description: This is a free text field where the special instructions about
+          the product, shipment are added
+        maxLength: 2000
+        minLength: 0
+        type: string
+      CollectionContactName:
+        description: Name of the person from whom the package should be collected
+        maxLength: 50
+        minLength: 0
+        type: string
+      CollectionCODRequired:
+        description: This indicates whether collection COD is required. The potential
+          values are "Yes/No," where "Yes" signifies that the COD is required, and
+          "No" signifies that it is not required.
+        type: boolean
+      CollectionSignatureRequired:
+        description: This indicates whether obtaining a signature from the recipient
+          is necessary after package collection. The potential values are "Yes/No,"
+          where "Yes" signifies that the signature is required, and "No" signifies
+          that it is not required.
+        type: boolean
+      Distance:
+        format: double
+        description: Distance estimated for the delivery
+        type: number
+      Height:
+        format: double
+        description: Height of the package
+        type: number
+      Width:
+        format: double
+        description: Width of the package
+        type: number
+      Length:
+        format: double
+        description: Length of the package
+        type: number
+      Weight:
+        format: double
+        description: Weight of the package
+        type: number
+      Quantity:
+        format: int32
+        description: Order quantity
+        type: integer
+      PriceSet:
+        description: Priceset of the package
+        maxLength: 50
+        minLength: 0
+        type: string
+      DeclaredValue:
+        format: double
+        description: The amount value declared for the order
+        type: number
+      DeliverySignatureRequired:
+        description: Indicates whether a signature is necessary from the recipient
+          upon package delivery. The potential values are "Yes/No," where "Yes" signifies
+          that the signature is required, and "No" signifies that it is not required.
+        type: boolean
+      SuppressUserNotification:
+        description: This allows to prevent or disable notifications intended for
+          a user. The potential values are "Yes/No," where "Yes" signifies that the
+          notifications should not be sent, and "No" signifies that notification has
+          to to be sent.
+        type: boolean
+      PurchaseOrderNumber:
+        description: PurchaseOrderNumber serves as a unique identifier to track the
+          purchase order.
+        maxLength: 50
+        minLength: 0
+        type: string
+      ReferenceNumber:
+        description: ReferenceNumber serves as a unique identifier to track the package
+          order.
+        maxLength: 50
+        minLength: 0
+        type: string
+      ShortCodeOptIn:
+        description: It signifies whether a shortcodeoptin is required or not. The
+          potential values are "Yes/No," where "Yes" signifies that the shortcodeoptin
+          is required, and "No" signifies that it is not required.
+        type: boolean
+      CollectionLocation:
+        "$ref": "#/definitions/Collectionlocation"
+        description: ''
+      DeliveryLocation:
+        "$ref": "#/definitions/Deliverylocation"
+        description: ''
+      ShipToInjectionPoint:
+        description: It signifies whether a shipment to the injection point is required
+          or not. The potential values are "Yes/No," where "Yes" signifies that the
+          shipment is required, and "No" signifies that it is not required.
+        type: boolean
+      ShippinglabelSize:
+        description: Represents the size of the shipping label
+        maxLength: 50
+        minLength: 0
+        type: string
+      RXNumber:
+        description: Represents the size of the shipping label
+        maxLength: 250
+        minLength: 0
+        type: string
+      SignatureType:
+        description: This denotes whether the signature should be received from the
+          desired contact. The possible values are “Direct/Indirect” where “Direct”
+          signifies that the signature needs to be received from the desired person
+          and “Indirect” signifies that it is not needed to be collected from the
+          desired person
+        maxLength: 50
+        minLength: 0
+        type: string
+      IsAdultSignature:
+        description: Denotes the signature is received from an adult. The possible
+          values are “Yes/No” where “Yes” signifies that the signature was received
+          from an adult person and “No” signifies that it is not an adult signature
+        type: boolean
+      DriverInstruction:
+        description: A text field that allows for the inclusion of instructions to
+          provide to drivers.
+        maxLength: 200
+        minLength: 0
+        type: string
+  Collectionlocation:
+    type: object
+    properties:
+      Zone:
+        description: Denotes the location zone
+        maxLength: 50
+        minLength: 0
+        type: string
+      ID:
+        description: The ID generated by the system serves as a unique identifier
+        maxLength: 50
+        minLength: 0
+        type: string
+      ContactName:
+        description: Name of the contact person of collection
+        maxLength: 50
+        minLength: 0
+        type: string
+      CompanyName:
+        description: Name of the company of the collection location
+        maxLength: 50
+        minLength: 0
+        type: string
+      AddressLine1:
+        description: Line 1 of the collection location address.
+        maxLength: 50
+        minLength: 0
+        type: string
+      AddressLine2:
+        description: Line 2 of the collection location address.
+        maxLength: 50
+        minLength: 0
+        type: string
+      City:
+        description: City of the collection location
+        maxLength: 50
+        minLength: 0
+        type: string
+      State:
+        description: State of the collection location
+        maxLength: 50
+        minLength: 0
+        type: string
+      PostalCode:
+        description: Postal code of the collection and delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      Country:
+        description: Country of the collection location
+        maxLength: 50
+        minLength: 0
+        type: string
+      Comments:
+        description: City of the collection location
+        maxLength: 50
+        minLength: 0
+        type: string
+      Email:
+        description: Email address of the contact person
+        maxLength: 512
+        minLength: 0
+        type: string
+      Phone:
+        description: Phone number of the contact person in collection
+        maxLength: 50
+        minLength: 0
+        type: string
+      Category:
+        description: This is used to specify a category
+        maxLength: 256
+        minLength: 0
+        type: string
+      LatitudeLongitude:
+        description: Lat and Long coordinates to collect the package
+        maxLength: 100
+        minLength: 0
+        type: string
+  Deliverylocation:
+    type: object
+    properties:
+      Zone:
+        description: Denotes the location zone
+        maxLength: 50
+        minLength: 0
+        type: string
+      ID:
+        description: The ID generated by the system serves as a unique identifier
+        maxLength: 50
+        minLength: 0
+        type: string
+      ContactName:
+        description: Name of the contact person of delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      CompanyName:
+        description: Name of the company of the delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      AddressLine1:
+        description: Line 1 of the delivery location address.
+        maxLength: 50
+        minLength: 0
+        type: string
+      AddressLine2:
+        description: Line 2 of the delivery location address.
+        maxLength: 50
+        minLength: 0
+        type: string
+      City:
+        description: City of the delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      State:
+        description: State of the delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      PostalCode:
+        description: Postal code of the delivery and delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      Country:
+        description: Country of the delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      Comments:
+        description: City of the delivery location
+        maxLength: 50
+        minLength: 0
+        type: string
+      Email:
+        description: Email address of the contact person
+        maxLength: 512
+        minLength: 0
+        type: string
+      Phone:
+        description: Phone number of the contact person in delivery
+        maxLength: 50
+        minLength: 0
+        type: string
+      Category:
+        description: This is used to specify a category
+        maxLength: 256
+        minLength: 0
+        type: string
+      LatitudeLongitude:
+        description: Lat and Long coordinates to deliver the package
+        maxLength: 100
+        minLength: 0
+        type: string
+  CustomOtOrder:
+    type: object
+    properties:
+      OtOrderId:
+        format: int32
+        type: integer
+      TrackingNumber:
+        type: string
+      Status:
+        type: string
+      IsProcessed:
+        type: boolean
+      IsActive:
+        type: boolean
+      InsertDate:
+        format: date-time
+        type: string
+      DriverEmail:
+        type: string
+      DeliveredTo:
+        type: string
+      ExceptionCode:
+        format: int32
+        type: integer
+      Description:
+        type: string
