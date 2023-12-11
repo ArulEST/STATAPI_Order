@@ -1,7 +1,6 @@
 ---
 swagger: '2.0'
 info:
-  version: v2
   title: STATAPI Private
   x-logo:
     url: "../STATAPI_V2/logo.png"
@@ -25,37 +24,760 @@ tags:
       
       
         •	**Order Status Tracking:** Easily monitor the status of orders, from creation to shipment and delivery, enabling real-time order tracking for customers and staff. 
-  - name: Customers
+  - name: Deliveries
     description: |
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Customers API facilitates interaction with and management of customer data. It offers a standardized method for creating, updating, and deleting customer records, as well as accessing and retrieving customer-related information, including profiles and order history, among other relevant data. This API is employed in improving the overall customer experience and enabling the provision of personalized services. 
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; These APIs are designed to enhance and streamline the management of delivery processes, ensuring effective coordination, tracking, and execution within a system.  
+  - name: DeliveryAssignments
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A "delivery assignments" API assists in organizing the allocation of deliveries to particular customers. Its purpose includes overseeing and facilitating the efficient coordination, monitoring, and updates of deliveries within a system throughout the entire delivery process.  
+  - name: EmailNotification
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; An "email notification" API is created specifically to automatically send crucial notifications via email from within an application or system to inform users or stakeholders.   
+  - name: LocationUpdate
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The "location update" APIs enable the real-time submission or updating of geographic coordinates or location data, ensuring seamless order delivery processes. 
+  - name: OnTimeUpdates
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This collection of APIs aids in managing functions and operations within the OnTime application. This encompasses updating order details, syncing orders, assigning drivers, providing a tracking link for order status, and more. 
+  - name: Pickups
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The "pickups" API oversees the scheduling, tracking, and management of scheduled pickups for ordered goods or packages. 
+  - name: PickupTypes
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  - name: Schedule
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; These APIs aim to streamline and enhance the management of delivery schedules, ensuring efficient planning, execution, and communication throughout the delivery process. 
   - name: ServiceAreas
     description: |
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Service Areas API enables users to access and oversee data associated with designated service areas. It aids in determining service coverage by examining a customer's zipcode and region, identifying areas within the service proximity for efficient order delivery. 
-  - name: PriceSets
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; These APIs are designed to ease the handling and accessibility of data related to service boundaries or specific regions where delivery services are provided within distinct geographic areas. 
+  - name: UserLocation
     description: |
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A Price Set API provides a method for calculating and retrieving the price or cost associated with a specific order.  
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This enables the retrieval or tracking of a user's geographic coordinates. This data serves various purposes, including location-based services, navigation, delivery tracking, or delivering personalized content based on geographic proximity.  
+  - name: Account
+    description: |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The "user account" API manages user-related functions and interactions. These APIs facilitate tasks involving user accounts, such as: Creating and Registering accounts, Verifying and Authorizing access, Managing user profiles, and Deactivating or Deleting accounts. 
 
 x-tagGroups:
   - name: General
     tags:
       - Orders   
-      - OrderLabel  
-      - Customers  
-      - PriceSets  
-      - ServiceAreas  
+      - Deliveries  
+      - DeliveryAssignments  
+      - EmailNotification  
+      - LocationUpdate
+      - OnTimeUpdates   
+      - Pickups  
+      - PickupTypes  
+      - Schedule  
+      - ServiceAreas
+      - UserLocation  
+      - Account  
 
 paths:
+  "/api/Account/UserInfo":
+    get:
+      tags:
+      - Account
+      summary: Get user info
+      description: This is to get the OnTime user information
+      operationId: Account_GetUserInfo
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/UserInfoViewModel"
+  "/api/Account/Logout":
+    post:
+      tags:
+      - Account
+      summary: Logout
+      description: Logout
+      operationId: Account_Logout
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/Account/GetUserDetails":
+    post:
+      tags:
+      - Account
+      summary: Get user details
+      description: This is to post the OnTime user information in database
+      operationId: Account_GetUserDetails
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: UserName
+        in: body
+        description: Name of the user
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/JsonResult[UserDTO]"
+  "/api/Account/SyncUsers":
+    get:
+      tags:
+      - Account
+      summary: Sync OT and STAT users
+      description: This endpoint syncs the users details
+      operationId: Account_SyncOtAndStatUsers
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/Account/ManageInfo":
+    get:
+      tags:
+      - Account
+      summary: Get manage info
+      description: ''
+      operationId: Account_GetManageInfo
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: returnUrl
+        in: query
+        description: Custom redirect URL
+        required: true
+        type: string
+      - name: generateState
+        in: query
+        description: ''
+        required: false
+        type: boolean
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/ManageInfoViewModel"
+  "/api/Account/ChangePassword":
+    post:
+      tags:
+      - Account
+      summary: Change password
+      description: This endpoint enables changing the registered password.
+      operationId: Account_ChangePassword
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: model
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/ChangePasswordBindingModel"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/Account/SetPassword":
+    post:
+      tags:
+      - Account
+      summary: Set password
+      description: This endpoint enables the setting a new password for user account.
+      operationId: Account_SetPassword
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: model
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/SetPasswordBindingModel"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/Account/AddExternalLogin":
+    post:
+      tags:
+      - Account
+      summary: Add external login
+      description: ''
+      operationId: Account_AddExternalLogin
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: model
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/AddExternalLoginBindingModel"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/Account/RemoveLogin":
+    post:
+      tags:
+      - Account
+      summary: Remove login
+      description: This endpoint deletes the login account.
+      operationId: Account_RemoveLogin
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: model
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/RemoveLoginBindingModel"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/Account/ExternalLogin":
+    get:
+      tags:
+      - Account
+      summary: Get external login
+      description: This endpoint deletes the login account.
+      operationId: Account_GetExternalLogin
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: provider
+        in: query
+        description: Name of the provider
+        required: true
+        type: string
+      - name: error
+        in: query
+        description: Display the respective error details
+        required: false
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/Account/ExternalLogins":
+    get:
+      tags:
+      - Account
+      summary: Get external login
+      description: This endpoint deletes the login account.
+      operationId: Account_GetExternalLogins
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: returnUrl
+        in: query
+        description: ''
+        required: true
+        type: string
+      - name: generateState
+        in: query
+        description: ''
+        required: false
+        type: boolean
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/ExternalLoginViewModel"
+  "/api/Account/Register":
+    post:
+      tags:
+      - Account
+      summary: Register
+      description: This endpoint allows for the registration of a new account.
+      operationId: Account_Register
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: model
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/RegisterBindingModel"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/Account/RegisterExternal":
+    post:
+      tags:
+      - Account
+      summary: Register external
+      description: ''
+      operationId: Account_RegisterExternal
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: model
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/RegisterExternalBindingModel"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/Deliveries":
+    post:
+      tags:
+      - Deliveries
+      summary: Deliver scan
+      description: This endpoint facilitates the posting of DeliveryScanDTO while
+        also saving images to the database.
+      operationId: Deliveries_DeliverScan
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: delivery
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/DeliveryScanDTO"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  
+  "/api/Assignments":
+    get:
+      tags:
+      - DeliveryAssignments
+      summary: Assignments
+      description: This is to retrieve information regarding the delivery assignment.
+      operationId: DeliveryAssignments_Assignments
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/JsonResult[List[DeliveryAssignmentListDTO]]"
+          examples:
+            application/json:
+              Sequence: 1
+              TrackingNumber: '10356385'
+              IsOptimized: true
+        '400':
+          description: BadRequest
+          schema:
+            type: string
+  "/api/assignments/{trackingNumber}":
+    get:
+      tags:
+      - DeliveryAssignments
+      summary: Assignments
+      description: This is for accessing the delivery assignment associated with a
+        specific tracking number.
+      operationId: DeliveryAssignments_Assignments
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: path
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/JsonResult[DeliveryAssignmentDTO]"
+          examples:
+            application/json:
+            - Sequence: 1
+              TrackingNumber: '10356385'
+              SignatureRequired: true
+              DeliverAfter: '2023-12-07T07:56:18.4888669Z'
+              DeliverBefore: '2023-12-08T07:56:18.4888669Z'
+              Address:
+                CompanyName: Johnsons-6
+                ContactName: Johnsons-6
+                AddressLine1: 2334 Cedar Crest Blvd
+                AddressLine2: ''
+                City: Medford
+                State: OR
+                PostalCode: '97504'
+              Latitude: 0
+              Longitude: 0
+              PhoneNumber: "(541) 178-4197"
+              IsOptimized: true
+        '404':
+          description: NotFound
+          schema:
+            type: string
+  
+  
+  "/api/EmailNotification/LogEmail":
+    post:
+      tags:
+      - EmailNotification
+      summary: Log email
+      description: This is to post the logs that have been communicated to customers
+        via email notifications.
+      operationId: EmailNotification_LogEmail
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: Type
+        in: query
+        description: ''
+        required: true
+        type: string
+      - name: emailNotificationDTO
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/EmailNotificationDTO"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/LocationUpdate":
+    post:
+      tags:
+      - LocationUpdate
+      summary: Location update
+      description: This is to update the delivery location details in database
+      operationId: LocationUpdate_LocationUpdate
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: location
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/LocationUpdateDTO"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  
+  "/api/OnTimeUpdates/UpdateOrder":
+    post:
+      tags:
+      - OnTimeUpdates
+      summary: Update order
+      description: ''
+      operationId: OnTimeUpdates_UpdateOrder
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: otOrder
+        in: body
+        description: ''
+        required: true
+        schema:
+          type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/OnTimeUpdates/syncOrder":
+    post:
+      tags:
+      - OnTimeUpdates
+      summary: Sync order
+      description: This is to sync the order details from OnTime.
+      operationId: OnTimeUpdates_SyncOrder
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: data
+        in: body
+        description: ''
+        required: true
+        schema:
+          type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/OnTimeUpdates/SetAssignedDriver/{id}":
+    post:
+      tags:
+      - OnTimeUpdates
+      summary: Set assigned driver
+      description: This is to sync the order details from OnTime.
+      operationId: OnTimeUpdates_SetAssignedDriver
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: id
+        in: path
+        description: The unique generated by the system to identify the assigned driver
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/OnTimeUpdates/SubmitOrderUpdate":
+    post:
+      tags:
+      - OnTimeUpdates
+      summary: Submit order update
+      description: This is for obtaining the submitted order details.
+      operationId: OnTimeUpdates_SubmitOrderUpdate
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: otOrder
+        in: body
+        description: ''
+        required: true
+        schema:
+          type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/OnTimeUpdates/SendStatusLinkText":
+    post:
+      tags:
+      - OnTimeUpdates
+      summary: Send status link text
+      description: This endpoint posts a text link for tracking the order's status.
+      operationId: OnTimeUpdates_SendStatusLinkText
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: data
+        in: body
+        description: ''
+        required: true
+        schema:
+          type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/OnTimeUpdates/SubmitOrderUpdate2/{trackingNumber}/{status}":
+    post:
+      tags:
+      - OnTimeUpdates
+      summary: Submit order update
+      description: This is for obtaining the submitted order details.
+      operationId: OnTimeUpdates_SubmitOrderUpdate2
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: trackingNumber
+        in: path
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      - name: status
+        in: path
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      - name: otOrder
+        in: body
+        description: ''
+        required: true
+        schema:
+          type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/OnTimeUpdates/UpdateOrderFromOnTime":
+    post:
+      tags:
+      - OnTimeUpdates
+      summary: Update order from onTime
+      description: ''
+      operationId: OnTimeUpdates_UpdateOrderFromOnTime
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: otOrder
+        in: body
+        description: ''
+        required: true
+        schema:
+          type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/OnTimeUpdates/{senderZipCode}/{recipZipCode}":
+    get:
+      tags:
+      - OnTimeUpdates
+      summary: check
+      operationId: OnTimeUpdates_Get
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: senderZipCode
+        in: path
+        required: true
+        type: string
+      - name: recipZipCode
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+    
+  
   "/api/orders/getImages/{trackingNumber}/{ImageId}":
     get:
       tags:
       - Orders
-      summary: Get image
+      summary: Get images by customerid
       description: This endpoint retrieves the base64-encoded images of the customer.
       operationId: Orders_GetImagesByCustomerId
       consumes: []
       produces:
       - application/json
       - text/json
+      - image/png
+      - image/svg+xml
       parameters:
       - name: trackingNumber
         in: path
@@ -74,11 +796,16 @@ paths:
           description: OK
           schema:
             type: object
+          examples:
+            application/json:
+              Response: image/png;base64
+        '400':
+          description: BadRequest
   "/api/orders/getsignature/{trackingNumber}/{format}":
     get:
       tags:
       - Orders
-      summary: Get signature
+      summary: Get signature by customerid
       description: This endpoint provides the base64-encoded signature received from
         the customer upon order delivery.
       operationId: Orders_GetSignatureByCustomerId
@@ -86,6 +813,8 @@ paths:
       produces:
       - application/json
       - text/json
+      - image/png
+      - image/svg+xml
       parameters:
       - name: trackingNumber
         in: path
@@ -103,6 +832,11 @@ paths:
           description: OK
           schema:
             type: object
+          examples:
+            application/json:
+              Response: image/png;base64
+        '400':
+          description: BadRequest
   "/api/CreateorderfromPortal":
     post:
       tags:
@@ -130,6 +864,120 @@ paths:
           description: OK
           schema:
             type: object
+          examples:
+            application/json:
+              RegionCode: AUS
+              error:
+              ID: ae6e3698 - 812a - 4c6d - 84c0 - fe5f8d303205
+              TrackingNumber: '10358950'
+              TrackingURL: https://sampleurl.com/MyOrder/?id=8i569mGbnUSlsErmjSOSNQ
+              BarcodeURL: https://sampleurl.net/OrdersManagement/Orders/OrderShippingLabel?orderId=ae6e3698-812a-4c6d-84c0-fe5f8d303205&customerId=57ecc72b-906e-4eb8-ae2a-62e53c9ec5e5
+              ShippingLabel: https://sampleurl.com/api/DownloadLabel?TrackingNumber=10358950&Type=ShippingLabel&CustomerId=57ecc72b-906e-4eb8-ae2a-62e53c9ec5e5
+              VpodDownload: https://sampleurl.com/api/orders/vpoddownload?trackingNumber=10358950
+              SignatureURL:
+              Refrigerated: false
+              StatusUpdates:
+              - Date: '2023-09-29T08:15:08.7733333'
+                Description: Delivered
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:15:08.7733333'
+                Region: Austin
+              - Date: '2023-09-29T08:14:42.0133333'
+                Description: On vehicle for delivery
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:14:42.0133333'
+                Region: Austin
+              - Date: '2023-09-29T08:14:23.7133333'
+                Description: Arrived at AUSTIN sort facility
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:14:23.7133333'
+                Region: Austin
+              - Date: '2023-09-29T08:13:59.52'
+                Description: Outbound shuttle transfer
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:59.52'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:48.1'
+                Description: Arrived at DALLAS sort facility
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:48.1'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:38.1'
+                Description: Delivery date changed
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:38.1'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:34.9566667'
+                Description: Picked up
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:34.9566667'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:05.9466667'
+                Description: Order information received
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:05.9466667'
+                Region: Dallas
+              DeliveryContactName: ''
+              StatusCode: 3
+              CustomerAccount: '911834035'
+              Description: Ordered From STG API
+              Comments:
+              Customer: 57ecc72b - 906e-4eb8 - ae2a - 62e53c9ec5e5
+              PriceSet: b6ec8de4 - 852a - 445f - 8f3e-c56b8b396111
+              CollectionArrivalWindow:
+                EarliestTime: '2023-09-29T08:13:03.057'
+                LatestTime: '2023-09-30T02:00:00'
+              DeliveryArrivalWindow:
+                EarliestTime: '2023-09-29T10:00:00'
+                LatestTime: '2023-09-29T18:00:00'
+              CollectionSignatureRequired: true
+              DeliverySignatureRequired: true
+              SuppressUserNotification: false
+              CollectionLocation:
+                Zone:
+                ID: 83f3fbcc-905f-4ffd-a96d-0abd836cee64
+                ContactName: Demo Collection-11
+                CompanyName: Collection Company-11
+                AddressLine1: 2334 Cedar Crest Blvd
+                AddressLine2: None
+                City: Dallas
+                State: TX
+                PostalCode: '75203'
+                Country: United States
+                Comments:
+                Email: pharma@yopmail.com
+                Phone: '9517538640'
+                Category:
+                LatitudeLongitude: 32.7334,-96.79282
+              DeliveryLocation:
+                Zone:
+                ID: 8c7630b9-5a2c-4c1e-8eb5-88b864ca1a37
+                ContactName: Texaco Austin schedule-10
+                CompanyName: Texaco Austin schedule-10
+                AddressLine1: 6018 Atwood St
+                AddressLine2: "-"
+                City: Austin
+                State: TX
+                PostalCode: '78741'
+                Country: United States
+                Comments: test
+                Email: uzumaki@yopmail.com
+                Phone: '75315945610'
+                Category:
+                LatitudeLongitude:
+              DeclaredValue: 10
+              TotalCost: 11
+              DriverInstruction:
+        '400':
+          description: BadRequest
   "/api/Createorder":
     post:
       tags:
@@ -156,6 +1004,120 @@ paths:
           description: OK
           schema:
             type: object
+          examples:
+            application/json:
+              RegionCode: AUS
+              error:
+              ID: ae6e3698 - 812a - 4c6d - 84c0 - fe5f8d303205
+              TrackingNumber: '10358950'
+              TrackingURL: https://sampleurl.com/MyOrder/?id=8i569mGbnUSlsErmjSOSNQ
+              BarcodeURL: https://sampleurl.net/OrdersManagement/Orders/OrderShippingLabel?orderId=ae6e3698-812a-4c6d-84c0-fe5f8d303205&customerId=57ecc72b-906e-4eb8-ae2a-62e53c9ec5e5
+              ShippingLabel: https://sampleurl.com/api/DownloadLabel?TrackingNumber=10358950&Type=ShippingLabel&CustomerId=57ecc72b-906e-4eb8-ae2a-62e53c9ec5e5
+              VpodDownload: https://sampleurl.com/api/orders/vpoddownload?trackingNumber=10358950
+              SignatureURL:
+              Refrigerated: false
+              StatusUpdates:
+              - Date: '2023-09-29T08:15:08.7733333'
+                Description: Delivered
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:15:08.7733333'
+                Region: Austin
+              - Date: '2023-09-29T08:14:42.0133333'
+                Description: On vehicle for delivery
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:14:42.0133333'
+                Region: Austin
+              - Date: '2023-09-29T08:14:23.7133333'
+                Description: Arrived at AUSTIN sort facility
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:14:23.7133333'
+                Region: Austin
+              - Date: '2023-09-29T08:13:59.52'
+                Description: Outbound shuttle transfer
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:59.52'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:48.1'
+                Description: Arrived at DALLAS sort facility
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:48.1'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:38.1'
+                Description: Delivery date changed
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:38.1'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:34.9566667'
+                Description: Picked up
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:34.9566667'
+                Region: Dallas
+              - Date: '2023-09-29T08:13:05.9466667'
+                Description: Order information received
+                Exception: false
+                ExceptionCode: 0
+                LocalTime: '2023-09-29T03:13:05.9466667'
+                Region: Dallas
+              DeliveryContactName: ''
+              StatusCode: 3
+              CustomerAccount: '911834035'
+              Description: Ordered From STG API
+              Comments:
+              Customer: 57ecc72b - 906e-4eb8 - ae2a - 62e53c9ec5e5
+              PriceSet: b6ec8de4 - 852a - 445f - 8f3e-c56b8b396111
+              CollectionArrivalWindow:
+                EarliestTime: '2023-09-29T08:13:03.057'
+                LatestTime: '2023-09-30T02:00:00'
+              DeliveryArrivalWindow:
+                EarliestTime: '2023-09-29T10:00:00'
+                LatestTime: '2023-09-29T18:00:00'
+              CollectionSignatureRequired: true
+              DeliverySignatureRequired: true
+              SuppressUserNotification: false
+              CollectionLocation:
+                Zone:
+                ID: 83f3fbcc-905f-4ffd-a96d-0abd836cee64
+                ContactName: Demo Collection-11
+                CompanyName: Collection Company-11
+                AddressLine1: 2334 Cedar Crest Blvd
+                AddressLine2: None
+                City: Dallas
+                State: TX
+                PostalCode: '75203'
+                Country: United States
+                Comments:
+                Email: pharma@yopmail.com
+                Phone: '9517538640'
+                Category:
+                LatitudeLongitude: 32.7334,-96.79282
+              DeliveryLocation:
+                Zone:
+                ID: 8c7630b9-5a2c-4c1e-8eb5-88b864ca1a37
+                ContactName: Texaco Austin schedule-10
+                CompanyName: Texaco Austin schedule-10
+                AddressLine1: 6018 Atwood St
+                AddressLine2: "-"
+                City: Austin
+                State: TX
+                PostalCode: '78741'
+                Country: United States
+                Comments: test
+                Email: uzumaki@yopmail.com
+                Phone: '75315945610'
+                Category:
+                LatitudeLongitude:
+              DeclaredValue: 10
+              TotalCost: 11
+              DriverInstruction:
+        '400':
+          description: BadRequest
   "/api/UploadSignature":
     post:
       tags:
@@ -177,15 +1139,14 @@ paths:
       responses:
         '200':
           description: OK
-          schema:
-            type: object
+        '400':
+          description: BadRequest
   "/api/UpdateOrderStatus":
     post:
       tags:
       - Orders
       summary: Update order status
-      description: This endpoint posts the otOrder object in the database and also
-        updates the order status in the database.
+      description: This endpoint update the order status information in the database
       operationId: Orders_UpdateOrderStatus
       consumes: []
       produces:
@@ -201,12 +1162,15 @@ paths:
       responses:
         '200':
           description: OK
-          schema:
-            type: object
+        '400':
+          description: BadRequest
   "/api/UpdateStatus":
     post:
       tags:
       - Orders
+      summary: Update order status
+      description: This endpoint posts the otOrder object in the database and also
+        updates the order status in the database.
       operationId: Orders_UpdateOrderStatus
       consumes:
       - application/json
@@ -218,14 +1182,15 @@ paths:
       parameters:
       - name: otOrder
         in: body
+        description: ''
         required: true
         schema:
           "$ref": "#/definitions/CustomOtOrder"
       responses:
         '200':
           description: OK
-          schema:
-            type: object
+        '400':
+          description: BadRequest
   "/api/Orders/SendStatusLinkText":
     post:
       tags:
@@ -247,12 +1212,14 @@ paths:
       responses:
         '200':
           description: OK
-          schema:
-            type: object
+        '400':
+          description: BadRequest
   "/api/updateaddress":
     post:
       tags:
       - Orders
+      summary: Update address
+      description: This endpoint stores the address information in the database
       operationId: Orders_UpdateAddress
       consumes: []
       produces:
@@ -261,17 +1228,21 @@ paths:
       parameters:
       - name: trackingNumber
         in: query
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
         required: true
         type: string
       responses:
         '200':
           description: OK
-          schema:
-            type: object
+        '400':
+          description: BadRequest
   "/api/updatepriceset":
     post:
       tags:
       - Orders
+      summary: Update priceset
+      description: This endpoint stores the price set information in the database
       operationId: Orders_UpdatePriceSet
       consumes: []
       produces:
@@ -280,17 +1251,22 @@ paths:
       parameters:
       - name: trackingNumber
         in: query
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
         required: true
         type: string
       responses:
         '200':
           description: OK
-          schema:
-            type: object
+        '400':
+          description: BadRequest
   "/api/updatedeliverywindow":
     post:
       tags:
       - Orders
+      summary: Update delivery window
+      description: This endpoint stores the delivery date/time information in the
+        database
       operationId: Orders_UpdateDeliveryDateTime
       consumes: []
       produces:
@@ -299,17 +1275,21 @@ paths:
       parameters:
       - name: trackingNumber
         in: query
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
         required: true
         type: string
       responses:
         '200':
           description: OK
-          schema:
-            type: object
+        '400':
+          description: BadRequest
   "/api/updatepricemodifier":
     post:
       tags:
       - Orders
+      summary: Update price modifier
+      description: This endpoint stores the price modifier information in the database
       operationId: Orders_UpdatePriceModifier
       consumes: []
       produces:
@@ -318,17 +1298,21 @@ paths:
       parameters:
       - name: trackingNumber
         in: query
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
         required: true
         type: string
       responses:
         '200':
           description: OK
-          schema:
-            type: object
+        '400':
+          description: BadRequest
   "/api/MoveSvgSignatureBlob":
     post:
       tags:
       - Orders
+      summary: Move svg signature blob
+      description: This helps transfer the SVG signature to a blob.
       operationId: Orders_MoveSvgSignatureBlob
       consumes: []
       produces:
@@ -337,18 +1321,21 @@ paths:
       parameters:
       - name: SignatureId
         in: query
+        description: Unique ID of the signature
         required: true
         type: integer
         format: int64
       responses:
         '200':
           description: OK
-          schema:
-            type: object
+        '400':
+          description: BadRequest
   "/api/ValidateAddress":
     post:
       tags:
       - Orders
+      summary: Validate address
+      description: This endpoint validates the delivery address.
       operationId: Orders_ValidateAddress
       consumes:
       - application/json
@@ -360,18 +1347,21 @@ paths:
       parameters:
       - name: dropOff
         in: body
+        description: ''
         required: true
         schema:
           "$ref": "#/definitions/Deliverylocation"
       responses:
         '200':
           description: OK
-          schema:
-            type: object
+        '400':
+          description: BadRequest
   "/api/orders/ZendeskNotificaion":
     post:
       tags:
       - Orders
+      summary: Zendesk notificaion
+      description: This is to save Zendesk notifications in the database.
       operationId: Orders_ZendeskNotificaion
       consumes: []
       produces:
@@ -380,21 +1370,26 @@ paths:
       parameters:
       - name: trackingNumber
         in: query
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
         required: true
         type: string
       - name: pickupDate
         in: query
+        description: The date scheduled for package pickup.
         required: true
         type: string
       responses:
         '200':
           description: OK
-          schema:
-            type: object
+        '400':
+          description: BadRequest
   "/api/orders/SyncImages":
     post:
       tags:
       - Orders
+      summary: Sync images
+      description: This is to sync images in the database.
       operationId: Orders_SyncImages
       consumes: []
       produces:
@@ -403,6 +1398,79 @@ paths:
       parameters:
       - name: trackingNumber
         in: query
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: BadRequest
+  
+  
+  "/api/Pickups":
+    post:
+      tags:
+      - Pickups
+      summary: Pickup scan
+      description: This endpoint is to post the Pickup details in database.
+      operationId: Pickups_PickupScan
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: lstpickup
+        in: body
+        description: ''
+        required: true
+        schema:
+          type: array
+          items:
+            "$ref": "#/definitions/PickupScanDTO"
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/JsonResult[List[PickupScanDTO]]"
+  
+  "/api/GetPickupTypes":
+    get:
+      tags:
+      - PickupTypes
+      summary: Get pickup types
+      description: ''
+      operationId: PickupTypes_GetPickupTypes
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/JsonResult[List[PickupTypeDTO]]"
+  
+  
+  "/api/ScheduleAPI/MigrationOTtoMDS":
+    post:
+      tags:
+      - Schedule
+      summary: Schedular migration
+      description: ''
+      operationId: Schedule_SchedularMigration
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: Type
+        in: query
+        description: ''
         required: true
         type: string
       responses:
@@ -410,18 +1478,122 @@ paths:
           description: OK
           schema:
             type: object
-  "/api/Orders":
+  "/api/ScheduleAPI/RecalculatePrice":
     post:
       tags:
-      - Orders
-      operationId: Orders_SetCustomerbyId
+      - Schedule
+      summary: Get recalculate price
+      description: ''
+      operationId: Schedule_GetRecalculatePrice
       consumes: []
       produces:
       - application/json
       - text/json
       parameters:
-      - name: CustomerId
+      - name: Type
         in: query
+        description: ''
+        required: true
+        type: string
+      - name: trackingNumber
+        in: query
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/ScheduleAPI/NightlySchedulerPatchWork":
+    post:
+      tags:
+      - Schedule
+      summary: Patch work process
+      description: ''
+      operationId: Schedule_PatchWorkProcess
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/ScheduleAPI/SignatureProcess":
+    post:
+      tags:
+      - Schedule
+      summary: Signature process
+      description: This endpoint assists in posting the signature process during delivery.
+      operationId: Schedule_SignatureProcess
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/ScheduleAPI/UpdateDriverDetails":
+    post:
+      tags:
+      - Schedule
+      summary: Update driver details
+      description: This endpoint helps to update the driver details
+      operationId: Schedule_UpdateDriverDetails
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  "/api/InvoiceMigration":
+    post:
+      tags:
+      - Schedule
+      summary: Invoice migration
+      description: ''
+      operationId: Schedule_InvoiceMigration
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: _invoiceMigration
+        in: body
+        required: true
+        schema:
+          "$ref": "#/definitions/InvoiceMigration"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  
+  "/api/Schedule":
+    get:
+      tags:
+      - Schedule
+      summary: Getting the Minutes and seconds from total minutes
+      operationId: Schedule_GetTimeSpanFromMinutes
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: TotalMinutes
+        in: query
+        description: ''
         required: true
         type: integer
         format: int32
@@ -429,8 +1601,771 @@ paths:
         '200':
           description: OK
           schema:
-            type: boolean
+            type: string
+  "/api/ServiceAreas/{senderZipCode}/{recipZipCode}":
+    get:
+      tags:
+      - ServiceAreas
+      summary: Get service areas
+      description: This is to get the service areas information for the order delivery
+      operationId: ServiceAreas_GetServiceAreas
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: senderZipCode
+        in: path
+        description: Zipcode of the sender
+        required: true
+        type: string
+      - name: recipZipCode
+        in: path
+        description: Zipcode of the recipient
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: BadRequest
+    
+  
+    
+  
+  "/api/UserLocation":
+    post:
+      tags:
+      - UserLocation
+      summary: User mobile connection
+      description: Post User Location details
+      operationId: UserLocation_UserMobileConnection
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: value
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/UserDTO"
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/JsonResult[UserDTO]"
+
 definitions:
+  UserInfoViewModel:
+    type: object
+    properties:
+      Email:
+        description: Email address of the user
+        maxLength: 512
+        minLength: 0
+        type: string
+      HasRegistered:
+        description: This indicates whether the user has registered or not. The potential
+          values are "Yes/No," where "Yes" signifies that the user is registered,
+          and "No" signifies that it is not.
+        type: boolean
+      LoginProvider:
+        description: Get user info
+        maxLength: 50
+        minLength: 0
+        type: string
+  JsonResult[UserDTO]:
+    type: object
+    properties:
+      Content:
+        "$ref": "#/definitions/UserDTO"
+        readOnly: true
+      SerializerSettings:
+        "$ref": "#/definitions/JsonSerializerSettings"
+        readOnly: true
+      Encoding:
+        "$ref": "#/definitions/Encoding"
+        readOnly: true
+      Request:
+        type: object
+        readOnly: true
+  UserDTO:
+    type: object
+    properties:
+      Username:
+        description: Name of the user
+        maxLength: 50
+        minLength: 0
+        type: string
+      LocatorId:
+        format: uuid
+        description: The unique ID generated by the system to access the user location
+          details
+        maxLength: 50
+        minLength: 0
+        type: string
+        example: 00000000-0000-0000-0000-000000000000
+      UserId:
+        format: uuid
+        description: The unique ID associated with the user
+        maxLength: 50
+        minLength: 0
+        type: string
+        example: 00000000-0000-0000-0000-000000000000
+      IsLinkedToDriver:
+        description: ''
+        type: boolean
+      CanCheckIn:
+        description: ''
+        type: boolean
+  JsonSerializerSettings:
+    type: object
+    properties:
+      ReferenceLoopHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+        type: integer
+      MissingMemberHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        type: integer
+      ObjectCreationHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+        type: integer
+      NullValueHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        type: integer
+      DefaultValueHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+      Converters:
+        type: array
+        items:
+          "$ref": "#/definitions/JsonConverter"
+      PreserveReferencesHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+      TypeNameHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        type: integer
+      MetadataPropertyHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+        type: integer
+      TypeNameAssemblyFormat:
+        format: int32
+        enum:
+        - 0
+        - 1
+        type: integer
+      TypeNameAssemblyFormatHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        type: integer
+      ConstructorHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        type: integer
+      ContractResolver:
+        "$ref": "#/definitions/IContractResolver"
+      EqualityComparer:
+        "$ref": "#/definitions/IEqualityComparer"
+      ReferenceResolver:
+        "$ref": "#/definitions/IReferenceResolver"
+      ReferenceResolverProvider:
+        "$ref": "#/definitions/Func[IReferenceResolver]"
+      TraceWriter:
+        "$ref": "#/definitions/ITraceWriter"
+      Binder:
+        "$ref": "#/definitions/SerializationBinder"
+      SerializationBinder:
+        "$ref": "#/definitions/ISerializationBinder"
+      Error:
+        type: object
+      Context:
+        "$ref": "#/definitions/StreamingContext"
+      DateFormatString:
+        type: string
+      MaxDepth:
+        format: int32
+        type: integer
+      Formatting:
+        format: int32
+        enum:
+        - 0
+        - 1
+        type: integer
+      DateFormatHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        type: integer
+      DateTimeZoneHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+      DateParseHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+        type: integer
+      FloatFormatHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+        type: integer
+      FloatParseHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        type: integer
+      StringEscapeHandling:
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+        type: integer
+      Culture:
+        type: string
+      CheckAdditionalContent:
+        type: boolean
+  Encoding:
+    type: object
+    properties:
+      m_codePage:
+        format: int32
+        type: integer
+      dataItem:
+        "$ref": "#/definitions/CodePageDataItem"
+      m_isReadOnly:
+        type: boolean
+      encoderFallback:
+        "$ref": "#/definitions/EncoderFallback"
+      decoderFallback:
+        "$ref": "#/definitions/DecoderFallback"
+  JsonConverter:
+    type: object
+    properties:
+      CanRead:
+        type: boolean
+        readOnly: true
+      CanWrite:
+        type: boolean
+        readOnly: true
+  IContractResolver:
+    type: object
+    properties: {}
+  IEqualityComparer:
+    type: object
+    properties: {}
+  IReferenceResolver:
+    type: object
+    properties: {}
+  Func[IReferenceResolver]:
+    type: object
+    properties:
+      Method:
+        "$ref": "#/definitions/MethodInfo"
+        readOnly: true
+      Target:
+        type: object
+        readOnly: true
+  ITraceWriter:
+    type: object
+    properties:
+      LevelFilter:
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        type: integer
+        readOnly: true
+  SerializationBinder:
+    type: object
+    properties: {}
+  ISerializationBinder:
+    type: object
+    properties: {}
+  StreamingContext:
+    type: object
+    properties:
+      m_additionalContext:
+        type: object
+      m_state:
+        format: int32
+        enum:
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32
+        - 64
+        - 128
+        - 255
+        type: integer
+  CodePageDataItem:
+    type: object
+    properties:
+      m_dataIndex:
+        format: int32
+        type: integer
+      m_uiFamilyCodePage:
+        format: int32
+        type: integer
+      m_webName:
+        type: string
+      m_headerName:
+        type: string
+      m_bodyName:
+        type: string
+      m_flags:
+        format: int32
+        type: integer
+  EncoderFallback:
+    type: object
+    properties:
+      bIsMicrosoftBestFitFallback:
+        type: boolean
+  DecoderFallback:
+    type: object
+    properties:
+      bIsMicrosoftBestFitFallback:
+        type: boolean
+  MethodInfo:
+    type: object
+    properties: {}
+  ManageInfoViewModel:
+    type: object
+    properties:
+      LocalLoginProvider:
+        description: Email of the user
+        maxLength: 50
+        minLength: 0
+        type: string
+      Email:
+        description: Email of the user
+        maxLength: 512
+        minLength: 0
+        type: string
+      Logins:
+        description: ''
+        type: array
+        items:
+          "$ref": "#/definitions/UserLoginInfoViewModel"
+      ExternalLoginProviders:
+        description: ''
+        type: array
+        items:
+          "$ref": "#/definitions/ExternalLoginViewModel"
+  UserLoginInfoViewModel:
+    type: object
+    properties:
+      LoginProvider:
+        description: ''
+        maxLength: 50
+        minLength: 0
+        type: string
+      ProviderKey:
+        description: ''
+        maxLength: 2000
+        minLength: 0
+        type: string
+  ExternalLoginViewModel:
+    type: object
+    properties:
+      Name:
+        description: ''
+        maxLength: 50
+        minLength: 0
+        type: string
+      Url:
+        description: ''
+        maxLength: 2000
+        minLength: 0
+        type: string
+      State:
+        description: ''
+        maxLength: 50
+        minLength: 0
+        type: string
+  ChangePasswordBindingModel:
+    required:
+    - OldPassword
+    - NewPassword
+    type: object
+    properties:
+      OldPassword:
+        description: Old password
+        maxLength: 100
+        minLength: 0
+        type: string
+      NewPassword:
+        description: New password
+        maxLength: 100
+        minLength: 6
+        type: string
+      ConfirmPassword:
+        description: Confirm new password
+        maxLength: 100
+        minLength: 0
+        type: string
+  SetPasswordBindingModel:
+    required:
+    - NewPassword
+    type: object
+    properties:
+      NewPassword:
+        description: This is to set a new password
+        maxLength: 100
+        minLength: 6
+        type: string
+      ConfirmPassword:
+        description: Confirm new password
+        maxLength: 100
+        minLength: 0
+        type: string
+  AddExternalLoginBindingModel:
+    required:
+    - ExternalAccessToken
+    type: object
+    properties:
+      ExternalAccessToken:
+        description: External access token information
+        maxLength: 100
+        minLength: 0
+        type: string
+  RemoveLoginBindingModel:
+    required:
+    - LoginProvider
+    - ProviderKey
+    type: object
+    properties:
+      LoginProvider:
+        description: ''
+        maxLength: 100
+        minLength: 0
+        type: string
+      ProviderKey:
+        description: ''
+        maxLength: 100
+        minLength: 0
+        type: string
+  RegisterBindingModel:
+    required:
+    - Email
+    - Password
+    type: object
+    properties:
+      Email:
+        description: Email of the user
+        maxLength: 512
+        minLength: 0
+        type: string
+      Password:
+        description: Password to register
+        maxLength: 100
+        minLength: 6
+        type: string
+      ConfirmPassword:
+        description: Confirm the password to register
+        maxLength: 100
+        minLength: 0
+        type: string
+  RegisterExternalBindingModel:
+    required:
+    - Email
+    type: object
+    properties:
+      Email:
+        description: Registered email of the external user
+        maxLength: 512
+        minLength: 0
+        type: string
+  DeliveryScanDTO:
+    type: object
+    properties:
+      Scan:
+        description: The scan records details like the time, location, and status
+          of the package until it is delivered.
+        maxLength: 50
+        minLength: 0
+        type: string
+      Signature:
+        description: The scan records details like the time, location, and status
+          of the package until it is delivered.
+        maxLength: 50
+        minLength: 0
+        type: string
+      Images:
+        description: Scanned images
+        maxLength: 2000
+        minLength: 0
+        type: array
+        items:
+          type: string
+      StatusCode:
+        format: int32
+        description: Status code of the order package
+        type: integer
+      DriverComments:
+        description: A text field that allows for the inclusion of instructions to
+          provide to drivers.
+        maxLength: 2000
+        minLength: 0
+        type: string
+      DeviceID:
+        format: uuid
+        description: The unique ID generated by the system to fetch the location details
+        maxLength: 50
+        minLength: 0
+        type: string
+        example: 00000000-0000-0000-0000-000000000000
+      Latitude:
+        format: double
+        description: Latitude coordinates to deliver the package
+        type: number
+      Longitude:
+        format: double
+        description: Longitude coordinates to deliver the package
+        type: number
+      DateTime:
+        format: date-time
+        description: Date and time of the delivery
+        type: string
+      Status:
+        description: Delivery status of the order
+        maxLength: 50
+        minLength: 0
+        type: string
+      IsSuccess:
+        description: This is to determine whether the delivery is successful. The
+          potential values are "Yes/No," where "Yes" signifies that the delivery is
+          success and "No" signifies that it is not.
+        type: boolean
+  
+  JsonResult[List[DeliveryAssignmentListDTO]]:
+    type: object
+    properties:
+      Content:
+        type: array
+        items:
+          "$ref": "#/definitions/DeliveryAssignmentListDTO"
+        readOnly: true
+      SerializerSettings:
+        "$ref": "#/definitions/JsonSerializerSettings"
+        readOnly: true
+      Encoding:
+        "$ref": "#/definitions/Encoding"
+        readOnly: true
+      Request:
+        type: object
+        readOnly: true
+  DeliveryAssignmentListDTO:
+    type: object
+    properties:
+      Sequence:
+        format: int32
+        description: Denotes the sequence number
+        type: integer
+      TrackingNumber:
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        maxLength: 50
+        minLength: 0
+        type: string
+      IsOptimized:
+        description: Deliver scan
+        type: boolean
+  JsonResult[DeliveryAssignmentDTO]:
+    type: object
+    properties:
+      Content:
+        "$ref": "#/definitions/DeliveryAssignmentDTO"
+        readOnly: true
+      SerializerSettings:
+        "$ref": "#/definitions/JsonSerializerSettings"
+        readOnly: true
+      Encoding:
+        "$ref": "#/definitions/Encoding"
+        readOnly: true
+      Request:
+        type: object
+        readOnly: true
+  DeliveryAssignmentDTO:
+    description: ''
+    type: object
+    properties:
+      Sequence:
+        format: int32
+        description: Denotes the sequence number
+        type: integer
+      TrackingNumber:
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
+        maxLength: 50
+        minLength: 0
+        type: string
+      SignatureRequired:
+        description: This indicates whether obtaining a signature from the recipient
+          is necessary. The potential values are "Yes/No," where "Yes" signifies that
+          the signature is required, and "No" signifies that it is not required.
+        type: boolean
+      DeliverAfter:
+        format: date-time
+        description: The reference date after which the package should be delivered
+        type: string
+      DeliverBefore:
+        format: date-time
+        description: The reference date before which the package should be delivered
+        type: string
+      Address:
+        "$ref": "#/definitions/Address"
+        description: ''
+      Latitude:
+        format: double
+        description: Latitude coordinates to deliver the package
+        type: number
+      Longitude:
+        format: double
+        description: Longitude coordinates to deliver the package
+        type: number
+      PhoneNumber:
+        description: Phone number of the contact person
+        maxLength: 50
+        minLength: 0
+        type: string
+      IsOptimized:
+        description: ''
+        type: boolean
+  Address:
+    type: object
+    properties:
+      CompanyName:
+        description: Name of the company
+        maxLength: 50
+        minLength: 0
+        type: string
+      ContactName:
+        description: Name of the contact person
+        maxLength: 50
+        minLength: 0
+        type: string
+      AddressLine1:
+        description: Line 1 of the location address.
+        maxLength: 50
+        minLength: 0
+        type: string
+      AddressLine2:
+        description: Line 2 of the location address.
+        maxLength: 50
+        minLength: 0
+        type: string
+      City:
+        description: City of the location
+        maxLength: 50
+        minLength: 0
+        type: string
+      State:
+        description: State of the location
+        maxLength: 50
+        minLength: 0
+        type: string
+      PostalCode:
+        description: Postal code of the collection and location
+        maxLength: 50
+        minLength: 0
+        type: string
+  EmailNotificationDTO:
+    type: object
+    properties:
+      Subject:
+        maxLength: 255
+        minLength: 0
+        type: string
+      Body:
+        maxLength: 255
+        minLength: 0
+        type: string
+      ToEmail:
+        maxLength: 255
+        minLength: 0
+        type: string
+      IsNotified:
+        type: boolean
+  LocationUpdateDTO:
+    type: object
+    properties:
+      LocatorId:
+        format: uuid
+        description: The unique ID generated by the system to access the user location
+          details
+        maxLength: 50
+        minLength: 0
+        type: string
+        example: 00000000-0000-0000-0000-000000000000
+      Latitude:
+        format: double
+        description: Latitude coordinates of the delivery location
+        type: number
+      Longitude:
+        format: double
+        description: Longitude coordinates of the delivery location
+        type: number
   OrderInDto:
     type: object
     properties:
@@ -589,6 +2524,59 @@ definitions:
         maxLength: 200
         minLength: 0
         type: string
+    example:
+      CODAmount: 20
+      DeliveryCODRequired: false
+      Refrigerated: false
+      TrackingNumber: ''
+      Description: 'Fragile Handle with care: Glass material'
+      Comments: Inflammable
+      CollectionCODRequired: false
+      CollectionSignatureRequired: false
+      Distance: 0
+      Height: 150
+      Width: 200
+      Length: 250
+      Weight: 200
+      Quantity: 1
+      PriceSet: b6ec8de4-852a-445f-8f3e-c56b8b396111
+      DeclaredValue: 129
+      DeliverySignatureRequired: true
+      SuppressUserNotification: false
+      PurchaseOrderNumber: '55555'
+      ShortCodeOptIn: false
+      CollectionLocation:
+        ID: 83f3fbcc-905f-4ffd-a96d-0abd836cee64
+        ContactName: Demo Collection-11
+        CompanyName: Collection Company-11
+        AddressLine1: 2334 Cedar Crest Blvd
+        AddressLine2: None
+        City: Dallas
+        State: TX
+        PostalCode: '75203'
+        Country: United States
+        Email: pharma@yopmail.com
+        Phone: '9517538640'
+        LatitudeLongitude: 32.7334,-96.79282
+      DeliveryLocation:
+        ID: 8c7630b9-5a2c-4c1e-8eb5-88b864ca1a37
+        ContactName: Texaco Austin schedule-10
+        CompanyName: Texaco Austin schedule-10
+        AddressLine1: 6018 Atwood St
+        AddressLine2: "-"
+        City: Austin
+        State: TX
+        PostalCode: '78741'
+        Country: United States
+        Comments: test
+        Email: uzumaki@yopmail.com
+        Phone: '75315945610'
+      ShipToInjectionPoint: true
+      ShippinglabelSize: 4x8
+      RXNumber: ''
+      SignatureType: direct
+      IsAdultSignature: true
+      DriverInstruction: ''
   Collectionlocation:
     type: object
     properties:
@@ -750,24 +2738,193 @@ definitions:
     properties:
       OtOrderId:
         format: int32
+        description: ID that serves as a unique identifier for the OtOrder
         type: integer
       TrackingNumber:
+        description: The tracking number acts as a unique identifier to track the
+          package in real-time during the shipment.
         type: string
       Status:
+        description: Status of the order
         type: string
       IsProcessed:
+        description: This denotes whether the order is processed or not. The potential
+          values are “Yes/No” where Yes denotes the order is processed and No denotes
+          that it is not.
         type: boolean
       IsActive:
+        description: This denotes whether the order is active or not. The potential
+          values are “Yes/No” where Yes denotes the order is active and No denotes
+          that it is not.
         type: boolean
       InsertDate:
         format: date-time
+        description: Insert the date and time
         type: string
       DriverEmail:
+        description: Email address of the driver
         type: string
       DeliveredTo:
+        description: Indicates the recipient for whom the order should be delivered.
         type: string
       ExceptionCode:
         format: int32
+        description: The code assigned for particular exceptions.
         type: integer
       Description:
+        description: This is a free text field where the special instructions about
+          the product, shipment are added
         type: string
+  PickupScanDTO:
+    type: object
+    properties:
+      Scans:
+        description: The scan records details like the time, location, and status
+          of the package until it is delivered.
+        type: array
+        items:
+          type: string
+      PickupTypeKey:
+        description: ''
+        maxLength: 50
+        minLength: 0
+        type: string
+      PickupGroupId:
+        format: int64
+        description: ''
+        type: integer
+      Success:
+        description: Denotes the success status of the pickup. The potential values
+          are “Yes/No” where Yes denotes the pickup is success and No denotes it is
+          not.
+        type: boolean
+      Message:
+        description: ''
+        maxLength: 50
+        minLength: 0
+        type: string
+      CustomerId:
+        format: int32
+        description: It serves as a distinctive reference number to differentiate
+          and identify customers.
+        type: integer
+      OnBehalfofId:
+        description: The unique ID associated with the on behalf of individual
+        maxLength: 50
+        minLength: 0
+        type: string
+      OnBehalfofName:
+        description: The name of the individual on whose behalf the pickup was carried
+          out
+        maxLength: 50
+        minLength: 0
+        type: string
+      DeviceID:
+        format: uuid
+        description: The unique ID generated by the system to fetch the location details
+        maxLength: 50
+        minLength: 0
+        type: string
+        example: 00000000-0000-0000-0000-000000000000
+      Latitude:
+        format: double
+        description: Latitude coordinates to deliver the package
+        type: number
+      Longitude:
+        format: double
+        description: Longitude coordinates to deliver the package
+        type: number
+      DateTime:
+        format: date-time
+        description: Date and time of the delivery
+        type: string
+      Status:
+        description: Delivery status of the order
+        maxLength: 50
+        minLength: 0
+        type: string
+      IsSuccess:
+        description: This is to determine whether the delivery is successful. The
+          potential values are "Yes/No," where "Yes" signifies that the delivery is
+          success and "No" signifies that it is not.
+        type: boolean
+  JsonResult[List[PickupScanDTO]]:
+    type: object
+    properties:
+      Content:
+        type: array
+        items:
+          "$ref": "#/definitions/PickupScanDTO"
+        readOnly: true
+      SerializerSettings:
+        "$ref": "#/definitions/JsonSerializerSettings"
+        readOnly: true
+      Encoding:
+        "$ref": "#/definitions/Encoding"
+        readOnly: true
+      Request:
+        type: object
+        readOnly: true
+  JsonResult[List[PickupTypeDTO]]:
+    type: object
+    properties:
+      Content:
+        type: array
+        items:
+          "$ref": "#/definitions/PickupTypeDTO"
+        readOnly: true
+      SerializerSettings:
+        "$ref": "#/definitions/JsonSerializerSettings"
+        readOnly: true
+      Encoding:
+        "$ref": "#/definitions/Encoding"
+        readOnly: true
+      Request:
+        type: object
+        readOnly: true
+  PickupTypeDTO:
+    type: object
+    properties:
+      Text:
+        description: ''
+        maxLength: 50
+        minLength: 0
+        type: string
+      PickupTypeKey:
+        description: ''
+        maxLength: 50
+        minLength: 0
+        type: string
+      CutoffTime:
+        description: ''
+        maxLength: 50
+        minLength: 0
+        type: string
+  InvoiceMigration:
+    type: object
+    properties:
+      ID:
+        description: ''
+        type: string
+      Orders:
+        description: This points to the object Orders
+        type: array
+        items:
+          type: string
+      InvoiceNumber:
+        description: The unique number to identify the invoice
+        maxLength: 50
+        minLength: 0
+        type: string
+      Date:
+        format: date-time
+        description: The invoice generated date
+        type: string
+      DueDate:
+        format: date-time
+        description: Invoice due date
+        type: string
+      Amount:
+        format: double
+        description: Invoice amount
+        type: number
