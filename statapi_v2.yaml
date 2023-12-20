@@ -470,8 +470,8 @@ paths:
             - Sequence: 1
               TrackingNumber: '10356385'
               SignatureRequired: true
-              DeliverAfter: '2023-12-07T07:56:18.4888669Z'
-              DeliverBefore: '2023-12-08T07:56:18.4888669Z'
+              DeliverAfter: '2023-12-19T05:49:16.7390868Z'
+              DeliverBefore: '2023-12-20T05:49:16.7390868Z'
               Address:
                 CompanyName: Johnsons-6
                 ContactName: Johnsons-6
@@ -508,7 +508,8 @@ paths:
       parameters:
       - name: Type
         in: query
-        description: ''
+        description: The type is to identify the authorised user. The possible values
+          are “Wise” and “Scheduler”.
         required: true
         type: string
       - name: emailNotificationDTO
@@ -764,7 +765,22 @@ paths:
           schema:
             type: object
     
-  
+  "/api/OnTimeUpdates":
+    get:
+      tags:
+      - OnTimeUpdates
+      summary: check
+      operationId: OnTimeUpdates_Get
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+    
   "/api/orders/getImages/{trackingNumber}/{ImageId}":
     get:
       tags:
@@ -1407,8 +1423,54 @@ paths:
           description: OK
         '400':
           description: BadRequest
-  
-  
+  "/api/Orders/{senderZipCode}/{recipZipCode}":
+    post:
+      tags:
+      - Orders
+      operationId: Orders_SetCustomerbyId
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: CustomerId
+        in: query
+        required: true
+        type: integer
+        format: int32
+      - name: senderZipCode
+        in: path
+        required: true
+        type: string
+      - name: recipZipCode
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: boolean
+  "/api/Orders":
+    post:
+      tags:
+      - Orders
+      operationId: Orders_SetCustomerbyId
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: CustomerId
+        in: query
+        required: true
+        type: integer
+        format: int32
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: boolean
   "/api/Pickups":
     post:
       tags:
@@ -1461,7 +1523,7 @@ paths:
       tags:
       - Schedule
       summary: Schedular migration
-      description: ''
+      description: This is used for migrating data from OnTime to the MDS schema.
       operationId: Schedule_SchedularMigration
       consumes: []
       produces:
@@ -1470,7 +1532,8 @@ paths:
       parameters:
       - name: Type
         in: query
-        description: ''
+        description: The type is to identify the authorised user. The possible values
+          are “Wise” and “Scheduler”.
         required: true
         type: string
       responses:
@@ -1483,7 +1546,8 @@ paths:
       tags:
       - Schedule
       summary: Get recalculate price
-      description: ''
+      description: This endpoint is designed to recompute the price associated with
+        the tracking number, comparing calculations between OT and STAT.
       operationId: Schedule_GetRecalculatePrice
       consumes: []
       produces:
@@ -1492,7 +1556,8 @@ paths:
       parameters:
       - name: Type
         in: query
-        description: ''
+        description: The type is to identify the authorised user. The possible values
+          are “Wise” and “Scheduler”.
         required: true
         type: string
       - name: trackingNumber
@@ -1510,8 +1575,9 @@ paths:
     post:
       tags:
       - Schedule
-      summary: Patch work process
-      description: ''
+      summary: Nightly scheduler patch work
+      description: If no Webhook requests are received for the tracking number, the
+        scheduler is implemented to verify the status of these requests.
       operationId: Schedule_PatchWorkProcess
       consumes: []
       produces:
@@ -1559,7 +1625,8 @@ paths:
       tags:
       - Schedule
       summary: Invoice migration
-      description: ''
+      description: This endpoint facilitates the transfer of invoices from OnTime,
+        subsequently updating the associated orders' invoices in STAT.
       operationId: Schedule_InvoiceMigration
       consumes:
       - application/json
@@ -1579,7 +1646,36 @@ paths:
           description: OK
           schema:
             type: object
-  
+  "/api/Schedule/{senderZipCode}/{recipZipCode}":
+    get:
+      tags:
+      - Schedule
+      summary: Getting the Minutes and seconds from total minutes
+      operationId: Schedule_GetTimeSpanFromMinutes
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: TotalMinutes
+        in: query
+        description: ''
+        required: true
+        type: integer
+        format: int32
+      - name: senderZipCode
+        in: path
+        required: true
+        type: string
+      - name: recipZipCode
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
   "/api/Schedule":
     get:
       tags:
@@ -1630,9 +1726,68 @@ paths:
         '400':
           description: BadRequest
     
-  
-    
-  
+  "/api/ServiceAreas":
+    get:
+      tags:
+      - ServiceAreas
+      summary: Get service areas
+      description: This is to get the service areas information for the order delivery
+      operationId: ServiceAreas_GetServiceAreas
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: senderZipCode
+        in: query
+        description: Zipcode of the sender
+        required: true
+        type: string
+      - name: recipZipCode
+        in: query
+        description: Zipcode of the recipient
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: BadRequest
+   
+  "/api/UserLocation/{senderZipCode}/{recipZipCode}":
+    post:
+      tags:
+      - UserLocation
+      summary: User mobile connection
+      description: Post User Location details
+      operationId: UserLocation_UserMobileConnection
+      consumes:
+      - application/json
+      - text/json
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      parameters:
+      - name: value
+        in: body
+        description: ''
+        required: true
+        schema:
+          "$ref": "#/definitions/UserDTO"
+      - name: senderZipCode
+        in: path
+        required: true
+        type: string
+      - name: recipZipCode
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/JsonResult[UserDTO]"
   "/api/UserLocation":
     post:
       tags:
@@ -2140,8 +2295,7 @@ definitions:
     type: object
     properties:
       Scan:
-        description: The scan records details like the time, location, and status
-          of the package until it is delivered.
+        description: This is to pass the tracking number
         maxLength: 50
         minLength: 0
         type: string
@@ -2197,7 +2351,13 @@ definitions:
           potential values are "Yes/No," where "Yes" signifies that the delivery is
           success and "No" signifies that it is not.
         type: boolean
-  
+  DbValidationError:
+    type: object
+    properties:
+      _propertyName:
+        type: string
+      _errorMessage:
+        type: string
   JsonResult[List[DeliveryAssignmentListDTO]]:
     type: object
     properties:
@@ -2229,7 +2389,7 @@ definitions:
         minLength: 0
         type: string
       IsOptimized:
-        description: Deliver scan
+        description: ''
         type: boolean
   JsonResult[DeliveryAssignmentDTO]:
     type: object
@@ -2779,8 +2939,7 @@ definitions:
     type: object
     properties:
       Scans:
-        description: The scan records details like the time, location, and status
-          of the package until it is delivered.
+        description: This is to pass the tracking number
         type: array
         items:
           type: string
@@ -2904,7 +3063,7 @@ definitions:
     type: object
     properties:
       ID:
-        description: ''
+        description: The unique ID associated with each invoice to identify them
         type: string
       Orders:
         description: This points to the object Orders
